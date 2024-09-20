@@ -5,7 +5,7 @@ import lombok.*;
 
 
 @Getter
-public class AuthSigninDtoResponse {
+public class AuthSigninDtoResponse<T> {
 
     private final String bearerToken;
     private final int statusCode;

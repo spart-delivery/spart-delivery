@@ -58,6 +58,6 @@ public class AuthService {
 
         String bearerToken = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
 
-        return new AuthSigninDtoResponse(bearerToken);
+        return new AuthSigninDtoResponse(bearerToken, 200,"success",null);
     }
 }

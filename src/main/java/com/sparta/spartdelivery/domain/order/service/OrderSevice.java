@@ -1,3 +1,4 @@
+/*
 package com.sparta.spartdelivery.domain.order.service;
 
 import com.sparta.spartdelivery.domain.order.dto.OrderRequestDto;
@@ -64,3 +65,4 @@ public class OrderService {
     // 배달 완료로 변경하기
 
 }
+*/

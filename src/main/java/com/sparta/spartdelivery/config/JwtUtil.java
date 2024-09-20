@@ -26,7 +26,7 @@ public class JwtUtil {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
-    @Value("${jwt.secret.key}")
+    @Value("lcKslgMFpdDabKYUOAhvM234oE+YsxfabGbtTSj4VXneMpl85reLyRfiye6wZJIZXMgY+Pu2pxr1zXPqHBuWFA==")
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
