@@ -6,17 +6,19 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ReviewSaveResponseDto {
+public class ReviewEditResponseDto {
 
     private Long reviewId;
     private Integer starPoint;
     private String content;
-    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
-    public ReviewSaveResponseDto(Review review) {
+    public ReviewEditResponseDto(Review review) {
         this.reviewId = review.getReviewId();
         this.starPoint = review.getStarPoint();
         this.content = review.getComment();
-        this.createdAt = review.getCreatedAt();
+        this.modifiedAt = review.getModifiedAt();
     }
+
+
 }
