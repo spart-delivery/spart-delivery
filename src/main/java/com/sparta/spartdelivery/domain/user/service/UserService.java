@@ -2,8 +2,7 @@ package com.sparta.spartdelivery.domain.user.service;
 
 
 import com.sparta.spartdelivery.config.PasswordEncoder;
-import com.sparta.spartdelivery.domain.user.dto.request.UserChangePasswordRequest;
-import com.sparta.spartdelivery.domain.user.dto.response.UserResponse;
+import com.sparta.spartdelivery.domain.user.dto.request.UserChangePasswordRequestDto;
 import com.sparta.spartdelivery.domain.user.entity.User;
 import com.sparta.spartdelivery.domain.user.exception.InvalidRequestException;
 import com.sparta.spartdelivery.domain.user.repository.UserRepository;
@@ -21,7 +20,7 @@ public class UserService {
 
     @Transactional
     //비밀번호 변경
-    public void changePassword(long userId, UserChangePasswordRequest userChangePasswordRequest) {
+    public void changePassword(long userId, UserChangePasswordRequestDto userChangePasswordRequest) {
         // 비밀번호 조건
                 //8자 이상
         if (userChangePasswordRequest.getNewPassword().length() < 8 ||

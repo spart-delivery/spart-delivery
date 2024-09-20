@@ -3,8 +3,8 @@ package com.sparta.spartdelivery.domain.auth.controller;
 import com.sparta.spartdelivery.common.dto.response.CommonResponseDto;
 import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninDtoRequest;
 import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupDtoRequest;
-import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninDtoResponse;
-import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupDtoResponse;
+import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninResponseDto;
+import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupResponseDto;
 import com.sparta.spartdelivery.domain.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,28 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-//    //회원가입
-//    @PostMapping("/auth/signup")
-//    public SignupResponse signup(@Valid @RequestBody SignupRequest signupRequest) {
-//        return authService.signup(signupRequest);
-//    }
-//    //로그인
-//    @PostMapping("/auth/signin")
-//    public SigninResponse signin(@Valid @RequestBody SigninRequest signinRequest) {
-//        return authService.signin(signinRequest);
-//    }
-
-
-
     // 회원가입
     @PostMapping("/auth/signup")
-    public ResponseEntity<CommonResponseDto<AuthSignupDtoResponse>> signUp(
+    public ResponseEntity<CommonResponseDto<AuthSignupResponseDto>> signup(
             @Valid @RequestBody AuthSignupDtoRequest signupRequest) {
 
-        AuthSignupDtoResponse signupResponse = authService.signUp(signupRequest);
+        AuthSignupResponseDto signupResponse = authService.signup(signupRequest);
 
         // CommonResponseDto를 사용하여 응답을 생성
-        CommonResponseDto<AuthSignupDtoResponse> responseDto = new CommonResponseDto<>(
+        CommonResponseDto<AuthSignupResponseDto> responseDto = new CommonResponseDto<>(
                 HttpStatus.CREATED,  // 일반적으로 201 Created를 사용
                 "회원가입이 성공적으로 완료되었습니다.",
                 signupResponse
@@ -52,13 +39,13 @@ public class AuthController {
 
     // 로그인
     @PostMapping("/auth/signin")
-    public ResponseEntity<CommonResponseDto<AuthSigninDtoResponse>> signin(
+    public ResponseEntity<CommonResponseDto<AuthSigninResponseDto>> signin(
             @Valid @RequestBody AuthSigninDtoRequest signinRequest) {
 
-        AuthSigninDtoResponse signinResponse = authService.signin(signinRequest);
+        AuthSigninResponseDto signinResponse = authService.signin(signinRequest);
 
         // CommonResponseDto를 사용하여 응답을 생성
-        CommonResponseDto<AuthSigninDtoResponse> responseDto = new CommonResponseDto<>(
+        CommonResponseDto<AuthSigninResponseDto> responseDto = new CommonResponseDto<>(
                 HttpStatus.OK,
                 "로그인 성공",
                 signinResponse
