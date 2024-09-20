@@ -1,5 +1,6 @@
 package com.sparta.spartdelivery.domain.review.entity;
 
+import com.sparta.spartdelivery.common.dto.AuthUser;
 import com.sparta.spartdelivery.domain.review.dto.requestDto.ReviewEditRequestDto;
 import com.sparta.spartdelivery.domain.review.dto.requestDto.ReviewSaveRequestDto;
 import jakarta.persistence.*;
@@ -25,6 +26,15 @@ public class Review {
     @Column(name = "comment", nullable = false)
     private String comment;
 
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
+
+    @Column(name = "store_id", nullable = false)
+    private Long storeId;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -32,17 +42,10 @@ public class Review {
     private LocalDateTime modifiedAt;
 
 
-    // 다대일 관계 추가 예정.
-//    @ManyToOne
-//    @JoinColumn(name = "order_id", nullable = false)
-//    private Order order;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "store_id", nullable = false)
-//    private Store store;
-
-
-    public Review(ReviewSaveRequestDto reviewSaveRequestDto) {
+    public Review(ReviewSaveRequestDto reviewSaveRequestDto, Long userId, Long orderId) {
+        this.storeId = reviewSaveRequestDto.getStoreId();
+        this.orderId = orderId;
+        this.userId = userId;
         this.starPoint = reviewSaveRequestDto.getStarPoint();
         this.comment = reviewSaveRequestDto.getComment();
         this.createdAt = LocalDateTime.now();
