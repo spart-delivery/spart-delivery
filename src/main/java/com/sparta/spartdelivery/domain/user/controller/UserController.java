@@ -73,12 +73,11 @@ public class UserController {
 
         // 성공 응답 생성
         CommonResponseDto<Void> responseDto = new CommonResponseDto<>(
-                HttpStatus.NO_CONTENT,
+                HttpStatus.OK,
                 "회원 탈퇴가 성공적으로 완료되었습니다.",
                 null // 데이터가 필요 없으므로 null
         );
 
         // ResponseEntity 반환
-        return new ResponseEntity<>(responseDto, HttpStatus.NO_CONTENT);
-    }
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);    }
 }
