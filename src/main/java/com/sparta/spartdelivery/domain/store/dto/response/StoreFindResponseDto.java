@@ -2,6 +2,7 @@ package com.sparta.spartdelivery.domain.store.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.spartdelivery.domain.menu.entity.Menu;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,5 +27,5 @@ public class StoreFindResponseDto {
 
     private Integer minOrderPrice;
 
-    private List<?> menuList;
+    private List<Menu> menuList;
 }
