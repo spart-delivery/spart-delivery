@@ -1,9 +1,6 @@
 package com.sparta.spartdelivery.menu.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,13 +11,23 @@ public class Menu {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 
+    @Column(nullable = false, name="store_id")
     private Long storeId;
-    private String menuName;
-    private int menuPrice;
-    private boolean deleted = false;
 
-    public Menu(Long storeId,String menuName, int menuPrice){
-        this.storeId=storeId;
+    @Column(nullable = false, name="menu_id")
+    private Long menuId;
+
+    @Column(nullable = false)
+    private String menuName;
+
+    @Column(nullable = false)
+    private int menuPrice;
+
+    // 상태 추가
+    @Enumerated(EnumType.STRING)
+    private MenuStatus status = MenuStatus.ACTIVE; /* 기본값은 ACTIVE */
+
+    public Menu( String menuName, int menuPrice){
         this.menuName=menuName;
         this.menuPrice=menuPrice;
     }
@@ -28,7 +35,7 @@ public class Menu {
         this.menuName=menuName;
         this.menuPrice=menuPrice;
     }
-    public void delete() {
-        this.deleted = true;
+    public void withdraw() {
+        this.status = MenuStatus.WITHDRAWN;  /* 상태를 WITHDRAWN으로 변경 */
     }
 }

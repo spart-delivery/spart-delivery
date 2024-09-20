@@ -9,8 +9,9 @@ public class MenuSaveResponseDto {
     private final String menuName;
     private final int menuPrice;
 
-    public MenuSaveResponseDto(Long storeId, String menuName, int menuPrice) {
+    public MenuSaveResponseDto(Long storeId, Long menuId, String menuName, int menuPrice) {
         this.storeId = storeId;
+        this.menuId = menuId;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
     }

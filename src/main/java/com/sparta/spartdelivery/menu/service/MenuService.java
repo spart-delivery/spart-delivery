@@ -16,18 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuRepository menuRepository;
 
-
-
     @Transactional
     public MenuSaveResponseDto saveMenu(MenuSaveRequestDto menuSaveRequestDto) {
         Menu newMenu = new Menu(
-                menuSaveRequestDto.getStoreId(),
                 menuSaveRequestDto.getMenuName(),
                 menuSaveRequestDto.getMenuPrice());
         Menu savedMenu = menuRepository.save(newMenu);
 
         return new MenuSaveResponseDto(
                 savedMenu.getStoreId(),
+                savedMenu.getMenuId(),
                 savedMenu.getMenuName(),
                 savedMenu.getMenuPrice());
     }
@@ -46,6 +44,11 @@ public class MenuService {
     @Transactional
     public void deleteMenu(Long menuId) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(()-> new NullPointerException("삭제할 menuId가 없습니다."));
-        menuRepository.delete(menu);
+        menu.withdraw();
+    }
+
+    public Menu findMenuById(Long menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다."));
     }
 }
