@@ -50,4 +50,5 @@ public class GlobalExceptionHandler{
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return getErrorResponse(status, ex.getMessage());
     }
+
 }
