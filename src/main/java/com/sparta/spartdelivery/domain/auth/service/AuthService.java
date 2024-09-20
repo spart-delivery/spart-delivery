@@ -2,10 +2,10 @@ package com.sparta.spartdelivery.domain.auth.service;
 
 import com.sparta.spartdelivery.config.JwtUtil;
 import com.sparta.spartdelivery.config.PasswordEncoder;
-import com.sparta.spartdelivery.domain.auth.dto.request.SigninRequest;
-import com.sparta.spartdelivery.domain.auth.dto.request.SignupRequest;
-import com.sparta.spartdelivery.domain.auth.dto.response.SigninResponse;
-import com.sparta.spartdelivery.domain.auth.dto.response.SignupResponse;
+import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninDtoRequest;
+import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupDtoRequest;
+import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninDtoResponse;
+import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupDtoResponse;
 import com.sparta.spartdelivery.domain.auth.exception.AuthException;
 import com.sparta.spartdelivery.domain.user.entity.User;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
@@ -25,7 +25,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public SignupResponse signup(SignupRequest signupRequest) {
+    public AuthSignupDtoResponse signUp(AuthSignupDtoRequest signupRequest) {
 
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
@@ -44,10 +44,10 @@ public class AuthService {
 
         String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), userRole);
 
-        return new SignupResponse(bearerToken);
+        return new AuthSignupDtoResponse(bearerToken);
     }
 
-    public SigninResponse signin(SigninRequest signinRequest) {
+    public AuthSigninDtoResponse signin(AuthSigninDtoRequest signinRequest) {
         User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
                 () -> new InvalidRequestException("가입되지 않은 유저입니다."));
 
@@ -58,6 +58,6 @@ public class AuthService {
 
         String bearerToken = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
 
-        return new SigninResponse(bearerToken);
+        return new AuthSigninDtoResponse(bearerToken);
     }
 }
