@@ -1,11 +1,11 @@
-package com.sparta.spartdelivery.menu.service;
+package com.sparta.spartdelivery.domain.menu.service;
 
-import com.sparta.spartdelivery.menu.dto.request.MenuSaveRequestDto;
-import com.sparta.spartdelivery.menu.dto.request.MenuUpdateRequestDto;
-import com.sparta.spartdelivery.menu.dto.response.MenuSaveResponseDto;
-import com.sparta.spartdelivery.menu.dto.response.MenuUpdateResponseDto;
-import com.sparta.spartdelivery.menu.entity.Menu;
-import com.sparta.spartdelivery.menu.repository.MenuRepository;
+import com.sparta.spartdelivery.domain.menu.entity.Menu;
+import com.sparta.spartdelivery.domain.menu.repository.MenuRepository;
+import com.sparta.spartdelivery.domain.menu.dto.request.MenuSaveRequestDto;
+import com.sparta.spartdelivery.domain.menu.dto.request.MenuUpdateRequestDto;
+import com.sparta.spartdelivery.domain.menu.dto.response.MenuSaveResponseDto;
+import com.sparta.spartdelivery.domain.menu.dto.response.MenuUpdateResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

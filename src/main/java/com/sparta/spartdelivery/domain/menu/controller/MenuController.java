@@ -1,14 +1,14 @@
-package com.sparta.spartdelivery.menu.controller;
+package com.sparta.spartdelivery.domain.menu.controller;
 
 import com.sparta.spartdelivery.common.annotation.Auth;
 import com.sparta.spartdelivery.common.dto.AuthUser;
+import com.sparta.spartdelivery.domain.menu.entity.Menu;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
-import com.sparta.spartdelivery.menu.dto.request.MenuSaveRequestDto;
-import com.sparta.spartdelivery.menu.dto.request.MenuUpdateRequestDto;
-import com.sparta.spartdelivery.menu.dto.response.MenuSaveResponseDto;
-import com.sparta.spartdelivery.menu.dto.response.MenuUpdateResponseDto;
-import com.sparta.spartdelivery.menu.entity.Menu;
-import com.sparta.spartdelivery.menu.service.MenuService;
+import com.sparta.spartdelivery.domain.menu.dto.request.MenuSaveRequestDto;
+import com.sparta.spartdelivery.domain.menu.dto.request.MenuUpdateRequestDto;
+import com.sparta.spartdelivery.domain.menu.dto.response.MenuSaveResponseDto;
+import com.sparta.spartdelivery.domain.menu.dto.response.MenuUpdateResponseDto;
+import com.sparta.spartdelivery.domain.menu.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
