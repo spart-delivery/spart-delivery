@@ -1,10 +1,10 @@
 package com.sparta.spartdelivery.domain.auth.controller;
 
 import com.sparta.spartdelivery.common.dto.response.CommonResponseDto;
-import com.sparta.spartdelivery.domain.auth.dto.request.SigninRequest;
-import com.sparta.spartdelivery.domain.auth.dto.request.SignupRequest;
-import com.sparta.spartdelivery.domain.auth.dto.response.SigninResponse;
-import com.sparta.spartdelivery.domain.auth.dto.response.SignupResponse;
+import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninDtoRequest;
+import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupDtoRequest;
+import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninDtoResponse;
+import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupDtoResponse;
 import com.sparta.spartdelivery.domain.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +34,13 @@ public class AuthController {
 
     // 회원가입
     @PostMapping("/auth/signup")
-    public ResponseEntity<CommonResponseDto<SignupResponse>> signup(
-            @Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<CommonResponseDto<AuthSignupDtoResponse>> signUp(
+            @Valid @RequestBody AuthSignupDtoRequest signupRequest) {
 
-        SignupResponse signupResponse = authService.signup(signupRequest);
+        AuthSignupDtoResponse signupResponse = authService.signUp(signupRequest);
 
         // CommonResponseDto를 사용하여 응답을 생성
-        CommonResponseDto<SignupResponse> responseDto = new CommonResponseDto<>(
+        CommonResponseDto<AuthSignupDtoResponse> responseDto = new CommonResponseDto<>(
                 HttpStatus.CREATED,  // 일반적으로 201 Created를 사용
                 "회원가입이 성공적으로 완료되었습니다.",
                 signupResponse
@@ -52,13 +52,13 @@ public class AuthController {
 
     // 로그인
     @PostMapping("/auth/signin")
-    public ResponseEntity<CommonResponseDto<SigninResponse>> signin(
-            @Valid @RequestBody SigninRequest signinRequest) {
+    public ResponseEntity<CommonResponseDto<AuthSigninDtoResponse>> signin(
+            @Valid @RequestBody AuthSigninDtoRequest signinRequest) {
 
-        SigninResponse signinResponse = authService.signin(signinRequest);
+        AuthSigninDtoResponse signinResponse = authService.signin(signinRequest);
 
         // CommonResponseDto를 사용하여 응답을 생성
-        CommonResponseDto<SigninResponse> responseDto = new CommonResponseDto<>(
+        CommonResponseDto<AuthSigninDtoResponse> responseDto = new CommonResponseDto<>(
                 HttpStatus.OK,
                 "로그인 성공",
                 signinResponse

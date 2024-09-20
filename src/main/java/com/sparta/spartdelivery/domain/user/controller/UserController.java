@@ -5,7 +5,6 @@ import com.sparta.spartdelivery.common.dto.AuthUser;
 import com.sparta.spartdelivery.common.dto.response.CommonResponseDto;
 import com.sparta.spartdelivery.domain.user.dto.request.DeleteUserRequest;
 import com.sparta.spartdelivery.domain.user.dto.request.UserChangePasswordRequest;
-import com.sparta.spartdelivery.domain.user.dto.response.UserResponse;
 import com.sparta.spartdelivery.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,24 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-
-    // 사용자 정보를 조회
-//    @GetMapping("/users/{userId}")
-//    public ResponseEntity<UserResponse> getUser(@PathVariable long userId) {
-//        return ResponseEntity.ok(userService.getUser(userId));
-//    }
-
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<CommonResponseDto<UserResponse>> getUser(@PathVariable long userId) {
-        UserResponse userResponse = userService.getUser(userId);
-        CommonResponseDto<UserResponse> responseDto = new CommonResponseDto<>(
-                HttpStatus.OK,
-                "success",
-                userResponse
-        );
-        return ResponseEntity.ok(responseDto);
-    }
-
 
     // 비밀번호를 변경
 //    @PutMapping("/users")
@@ -73,12 +54,11 @@ public class UserController {
 
         // 성공 응답 생성
         CommonResponseDto<Void> responseDto = new CommonResponseDto<>(
-                HttpStatus.NO_CONTENT,
+                HttpStatus.OK,
                 "회원 탈퇴가 성공적으로 완료되었습니다.",
                 null // 데이터가 필요 없으므로 null
         );
 
         // ResponseEntity 반환
-        return new ResponseEntity<>(responseDto, HttpStatus.NO_CONTENT);
-    }
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);    }
 }
