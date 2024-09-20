@@ -1,6 +1,6 @@
-package com.sparta.spartdelivery.menu.repository;
+package com.sparta.spartdelivery.domain.menu.repository;
 
-import com.sparta.spartdelivery.menu.entity.Menu;
+import com.sparta.spartdelivery.domain.menu.entity.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
