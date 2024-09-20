@@ -11,14 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
 
     // 리뷰 작성
-    @PostMapping()
+    @PostMapping("/reviews")
     public ResponseEntity<ReviewSaveResponseDto> saveReview(@RequestBody ReviewSaveRequestDto reviewSaveRequestDto/*,
                                                             @PathVariable Long orderId*/) {
         ReviewSaveResponseDto reviewSaveResponseDto = reviewService.saveReview(reviewSaveRequestDto/*,orderId*/);
@@ -26,7 +26,7 @@ public class ReviewController {
     }
 
     // 리뷰 수정
-    @PutMapping("/{reviewId}")
+    @PutMapping("/reviews/{reviewId}")
     public ResponseEntity<ReviewEditResponseDto> editReview(@RequestBody ReviewEditRequestDto reviewEditRequestDto,
                                                             @PathVariable Long reviewId) {
         ReviewEditResponseDto reviewEditResponseDto = reviewService.editReview(reviewEditRequestDto, reviewId);
@@ -34,14 +34,14 @@ public class ReviewController {
     }
 
     // 리뷰 조회
-//    @GetMapping("/{storeId}")
+//    @GetMapping("/stores/reviews/{storeId}")
 //    public ResponseEntity<List<ReviewReadResponseDto>> readReview(@PathVariable Long storeId) {
 //        List<ReviewReadResponseDto> reviewReadResponseDto = reviewService.readReview(storeId);
 //        return ResponseEntity<>(reviewReadResponseDto, HttpStatus.OK);
 //    }
 
     // 리뷰 삭제
-    @DeleteMapping("/{reviewId}")
+    @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -30,7 +30,7 @@ public class Review {
 
     @Column(name = "modified_at", nullable = false)
     private LocalDateTime modifiedAt;
-    
+
 
     // 다대일 관계 추가 예정.
 //    @ManyToOne

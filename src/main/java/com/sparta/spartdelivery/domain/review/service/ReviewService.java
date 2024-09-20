@@ -8,10 +8,8 @@ import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewSaveResponse
 import com.sparta.spartdelivery.domain.review.entity.Review;
 import com.sparta.spartdelivery.domain.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.List;
 
 @Service
@@ -70,7 +68,7 @@ public class ReviewService {
 
     // 별점 입력값 확인 메서드
     private void validateStarPoint(Integer starPoint) {
-        if(starPoint < 0 || starPoint > 6) {
+        if(starPoint < 1 || starPoint > 5) {
             throw new IllegalArgumentException("별점은 1 ~ 5 만 입력값만 입력할 수 있습니다.");
         }
     }
