@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,13 +16,13 @@ public class Order {
     @Column(name = "order_id")
     private long orderId;
 
-    @Column(name = "order_id")
+    @Column(name = "user_id")
     private long userId;
 
-    @Column(name = "order_id")
+    @Column(name = "store_id")
     private long storeId;
 
-    @Column(name = "order_id")
+    @Column(name = "menu_id")
     private long menuId;
 
     @Column(name = "created_at")
@@ -33,12 +32,19 @@ public class Order {
     @Column(nullable = false)
     private Status status = null;
 
-    public Order(long user, long store, long menu) {
+    public void initOrder(long user, long store, long menu) {
         this.userId = user;
         this.storeId = store;
         this.menuId = menu;
         this.createdAt = LocalDateTime.now();
         this.status = Status.ORDERED;
+    }
+    public Order(long user, long store, long menu) {
+        initOrder(user, store, menu);
+    }
+
+    public Order(Order sendOrder) {
+        initOrder(sendOrder.getUserId(), sendOrder.getStoreId(), sendOrder.getMenuId());
     }
 
 
