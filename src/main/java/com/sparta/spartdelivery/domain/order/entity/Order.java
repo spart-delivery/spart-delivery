@@ -17,13 +17,13 @@ public class Order {
     @Column(name = "order_id")
     private long orderId;
 
-    @Column(name = "user_id")
+    @Column(name = "order_id")
     private long userId;
 
-    @Column(name = "store_id")
+    @Column(name = "order_id")
     private long storeId;
 
-    @Column(name = "menu_id")
+    @Column(name = "order_id")
     private long menuId;
 
     @Column(name = "created_at")
