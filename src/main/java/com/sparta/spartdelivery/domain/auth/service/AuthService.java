@@ -4,8 +4,8 @@ import com.sparta.spartdelivery.config.JwtUtil;
 import com.sparta.spartdelivery.config.PasswordEncoder;
 import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninDtoRequest;
 import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupDtoRequest;
-import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninDtoResponse;
-import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupDtoResponse;
+import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninResponseDto;
+import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupResponseDto;
 import com.sparta.spartdelivery.domain.auth.exception.AuthException;
 import com.sparta.spartdelivery.domain.user.entity.User;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
@@ -25,8 +25,17 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public AuthSignupDtoResponse signUp(AuthSignupDtoRequest signupRequest) {
+    public AuthSignupResponseDto signup(AuthSignupDtoRequest signupRequest) {
+        // 비밀번호 조건
+        if (signupRequest.getPassword().length() < 8 ||
+                !signupRequest.getPassword().matches(".*[a-z].*") || // 소문자 포함
+                !signupRequest.getPassword().matches(".*[A-Z].*") || // 대문자 포함
+                !signupRequest.getPassword().matches(".*\\d.*") ||   // 숫자 포함
+                !signupRequest.getPassword().matches(".*[!@#$%^&*(),.?\":{}|<>].*")) { // 특수문자 포함
+            throw new InvalidRequestException("비밀번호는 8자 이상이어야 하고, 영문 대소문자, 숫자, 특수문자를 최소 1글자씩 포함해야 합니다.");
+        }
 
+        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
         UserRole userRole = UserRole.of(signupRequest.getUserRole());
@@ -42,12 +51,12 @@ public class AuthService {
         );
         User savedUser = userRepository.save(newUser);
 
-        String bearerToken = jwtUtil.createToken(savedUser.getUserId(), savedUser.getEmail(), userRole);
+        String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), userRole);
 
-        return new AuthSignupDtoResponse(bearerToken);
+        return new AuthSignupResponseDto(bearerToken);
     }
 
-    public AuthSigninDtoResponse signin(AuthSigninDtoRequest signinRequest) {
+    public AuthSigninResponseDto signin(AuthSigninDtoRequest signinRequest) {
         User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
                 () -> new InvalidRequestException("가입되지 않은 유저입니다."));
 
@@ -56,8 +65,10 @@ public class AuthService {
             throw new AuthException("잘못된 비밀번호입니다.");
         }
 
-        String bearerToken = jwtUtil.createToken(user.getUserId(), user.getEmail(), user.getUserRole());
+        String bearerToken = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
 
-        return new AuthSigninDtoResponse(bearerToken, 200, "success", null);
+        return new AuthSigninResponseDto(bearerToken);
     }
+
+
 }
