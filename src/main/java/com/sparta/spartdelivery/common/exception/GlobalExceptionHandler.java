@@ -64,4 +64,10 @@ public class GlobalExceptionHandler{
         return getErrorResponse(status, ex.getMessage());
     }
 
+    @ExceptionHandler(IllegalAccessException.class)
+    public ResponseEntity<CommonResponseDto<Object>> IllegalAccessException(IllegalAccessException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return getErrorResponse(status, ex.getMessage());
+    }
+
 }
