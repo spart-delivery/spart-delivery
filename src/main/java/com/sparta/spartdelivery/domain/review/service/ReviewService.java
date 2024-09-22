@@ -2,6 +2,7 @@ package com.sparta.spartdelivery.domain.review.service;
 
 import com.sparta.spartdelivery.common.dto.AuthUser;
 import com.sparta.spartdelivery.domain.order.entity.Order;
+import com.sparta.spartdelivery.domain.order.entity.OrderStatus;
 import com.sparta.spartdelivery.domain.order.repository.OrderRepository;
 import com.sparta.spartdelivery.domain.review.dto.requestDto.ReviewEditRequestDto;
 import com.sparta.spartdelivery.domain.review.dto.requestDto.ReviewSaveRequestDto;
@@ -48,7 +49,7 @@ public class ReviewService {
                 new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
 
         // 주문 상태가 COMPLETED 인지 확인
-        if (!order.getStatus().equals(Order.Status.COMPLETED)) {
+        if (!order.getStatus().equals(OrderStatus.COMPLETED)) {
             throw new IllegalArgumentException("리뷰는 완료된 주문에 한해서만 작성할 수 있습니다.");
         }
 

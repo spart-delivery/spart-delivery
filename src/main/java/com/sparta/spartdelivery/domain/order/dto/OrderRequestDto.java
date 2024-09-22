@@ -1,11 +1,13 @@
 package com.sparta.spartdelivery.domain.order.dto;
 
-import com.sparta.spartdelivery.domain.order.entity.Order;
+import com.sparta.spartdelivery.domain.order.entity.OrderStatus;
 import lombok.Getter;
 
 @Getter
 public class OrderRequestDto {
     private long storeId;
     private long menuId;
-    private Order.Status status;
+
+    // 사장님만 입력
+    private OrderStatus status;
 }
