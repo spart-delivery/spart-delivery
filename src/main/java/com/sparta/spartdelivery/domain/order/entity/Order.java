@@ -44,10 +44,6 @@ public class Order {
         initOrder(user, store, menu);
     }
 
-    public Order(Order sendOrder) {
-        initOrder(sendOrder.getUserId(), sendOrder.getStoreId(), sendOrder.getMenuId());
-    }
-
     public void acceptedOrder() {
         this.status = OrderStatus.ACCEPTED;
     }

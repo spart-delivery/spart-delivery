@@ -67,9 +67,8 @@ public class OrderService {
         }
 
         Order newOrder = new Order(user.getUserId(), store.getStoreId(), menu.getMenuId());
-        Order sendOrder = orderRepository.save(newOrder);
 
-        return new Order(sendOrder);
+        return orderRepository.save(newOrder);
     }
 
     /**
