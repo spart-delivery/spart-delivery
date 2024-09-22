@@ -20,9 +20,10 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // 손님 - 주문하기
     @PostMapping("/orders")
-    public ResponseEntity<CommonResponseDto<OrderResponseDto>> sendOrder(@Auth AuthUser authUser, @RequestBody OrderRequestDto orderRequestDto) {
+    public ResponseEntity<CommonResponseDto<OrderResponseDto>> sendOrder(
+            @Auth AuthUser authUser,
+            @RequestBody OrderRequestDto orderRequestDto) throws IllegalAccessException {
 
         Order order = orderService.sendOrder(authUser, orderRequestDto);
 
@@ -35,10 +36,9 @@ public class OrderController {
                 HttpStatus.OK);
     }
 
-    // 사장님 - 주문 내역 리스트 조회하기
     @GetMapping("/orders")
-    public ResponseEntity<CommonResponseDto<List<OrderResponseDto>>> getAllOrders() {
-        List<OrderResponseDto> orderResponseDtos = orderService.getAllOrders();
+    public ResponseEntity<CommonResponseDto<List<OrderResponseDto>>> getAllOrders(@Auth AuthUser authUser) throws IllegalAccessException {
+        List<OrderResponseDto> orderResponseDtos = orderService.getAllOrders(authUser);
 
         return new ResponseEntity<>(
                 new CommonResponseDto<>(
@@ -47,18 +47,21 @@ public class OrderController {
                 HttpStatus.OK);
     }
 
-//    // 사장님 - 주문 상태 변경하기
-//    @PatchMapping("/orders/{orderId}")
-//    public ResponseEntity<CommonResponseDto<OrderResponseDto>> updateOrderStatus(@Auth AuthUser authUser, @PathVariable long orderId, @RequestBody OrderRequestDto orderRequestDto) {
-//
-//        Order order = orderService.updateOrderStatus(authUser, orderId, orderRequestDto);
-//
-//        OrderResponseDto orderResponseDto = new OrderResponseDto(order);
-//
-//        return new ResponseEntity<>(
-//                new CommonResponseDto<>(
-//                        HttpStatus.OK, "success", orderResponseDto
-//                ),
-//                HttpStatus.OK);
-//    }
+    @PatchMapping("/orders/{orderId}")
+    public ResponseEntity<CommonResponseDto<OrderResponseDto>> updateOrderStatus(
+            @Auth AuthUser authUser,
+            @PathVariable long orderId,
+            @RequestBody OrderRequestDto orderRequestDto)
+            throws IllegalAccessException {
+
+        Order order = orderService.updateOrderStatus(authUser, orderId, orderRequestDto);
+
+        OrderResponseDto orderResponseDto = new OrderResponseDto(order);
+
+        return new ResponseEntity<>(
+                new CommonResponseDto<>(
+                        HttpStatus.OK, "success", orderResponseDto
+                ),
+                HttpStatus.OK);
+    }
 }
