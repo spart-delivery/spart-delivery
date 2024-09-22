@@ -15,7 +15,7 @@ public class User extends Timestamped {
 
     @Id // 고유 식별자 필드
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가 설정
-    private Long id;
+    private Long userId;
 
     @Column(unique = true) // 유일한 값이어야 함
     private String email;
@@ -37,7 +37,7 @@ public class User extends Timestamped {
 
     // userId, email, userRole을 받는 생성자 (주로 다른 객체에서 사용)
     private User(Long id, String email, UserRole userRole) {
-        this.id = id;
+        this.userId = id;
         this.email = email;
         this.userRole = userRole;
     }
