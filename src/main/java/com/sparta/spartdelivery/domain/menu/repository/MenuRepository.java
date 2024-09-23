@@ -14,5 +14,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     List<Menu> findAllActiveByStoreId(@Param("storeId") Long storeId);
 
     /* 가게의 같은 메뉴를 찾는 메서드 추가 */
-    Optional<Menu> findBySameName(Long storeId, String menuName);
+    Optional<Menu> findByStoreIdAndMenuName(Long storeId, String menuName);
 }

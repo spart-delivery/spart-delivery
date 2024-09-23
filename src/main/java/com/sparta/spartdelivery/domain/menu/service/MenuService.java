@@ -22,7 +22,7 @@ public class MenuService {
     @Transactional
     public MenuSaveResponseDto saveMenu(MenuSaveRequestDto menuSaveRequestDto, Long storeId) {
         /* 생성 시 메뉴 중복 체크 */
-        if (menuRepository.findBySameName(storeId, menuSaveRequestDto.getMenuName()).isPresent()){
+        if (menuRepository.findByStoreIdAndMenuName(storeId, menuSaveRequestDto.getMenuName()).isPresent()){
             throw new IllegalArgumentException("이미 존재하는 메뉴입니다.");
         }
         Menu newMenu = new Menu(
