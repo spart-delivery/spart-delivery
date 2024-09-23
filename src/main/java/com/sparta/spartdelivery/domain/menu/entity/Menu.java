@@ -31,10 +31,9 @@ public class Menu {
         this.menuPrice=menuPrice;
         this.storeId=storeId;
     }
-    public void update(String menuName, int menuPrice,Long menuId){
+    public void update(String menuName, int menuPrice){
         this.menuName=menuName;
         this.menuPrice=menuPrice;
-        this.menuId=menuId;
     }
     public void withdraw() {
         this.status = MenuStatus.WITHDRAWN;  /* 상태를 WITHDRAWN으로 변경 */
