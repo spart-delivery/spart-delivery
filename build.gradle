@@ -32,7 +32,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'jakarta.validation:jakarta.validation-api:3.0.0'
+//    implementation 'jakarta.validation:jakarta.validation-api:3.0.0'
+
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // bcrypt
     implementation 'at.favre.lib:bcrypt:0.10.2'

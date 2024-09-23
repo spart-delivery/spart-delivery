@@ -10,12 +10,11 @@ import lombok.NoArgsConstructor;
 public class Menu {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="menu_id")
+    private Long menuId;
 
     @Column(nullable = false, name="store_id")
     private Long storeId;
-
-    @Column(nullable = false, name="menu_id")
-    private Long menuId;
 
     @Column(nullable = false)
     private String menuName;
@@ -27,9 +26,10 @@ public class Menu {
     @Enumerated(EnumType.STRING)
     private MenuStatus status = MenuStatus.ACTIVE; /* 기본값은 ACTIVE */
 
-    public Menu( String menuName, int menuPrice){
+    public Menu( String menuName, int menuPrice, Long storeId){
         this.menuName=menuName;
         this.menuPrice=menuPrice;
+        this.storeId=storeId;
     }
     public void update(String menuName, int menuPrice){
         this.menuName=menuName;
