@@ -17,7 +17,7 @@ public class UserController {
 
     private final UserService userService;
     // 비밀번호 변경
-    @PutMapping("/users/pwdforget")
+    @PutMapping("/users")
     public ResponseEntity<CommonResponseDto<Void>> changePassword(
             @Auth AuthUser authUser,
             @RequestBody UserChangePasswordRequestDto userChangePasswordRequest) {
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     // 비밀번호를 사용하여 사용자 탈퇴
-    @DeleteMapping("/users/exit")
+    @DeleteMapping("/users/{userId}")
     public ResponseEntity<CommonResponseDto<Void>> deleteUser(
             @PathVariable long userId,
             @RequestBody UserDeleteRequestDto deleteUserRequest) {

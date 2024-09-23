@@ -6,6 +6,7 @@ import lombok.Getter;
 public class AuthSigninResponseDto {
     private final String bearerToken;
 
+
     public AuthSigninResponseDto(String bearerToken) {
         this.bearerToken = bearerToken;
     }

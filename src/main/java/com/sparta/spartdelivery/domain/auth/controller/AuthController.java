@@ -1,8 +1,8 @@
 package com.sparta.spartdelivery.domain.auth.controller;
 
 import com.sparta.spartdelivery.common.dto.response.CommonResponseDto;
-import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninDtoRequest;
-import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupDtoRequest;
+import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninRequestDto;
+import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupRequestDto;
 import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninResponseDto;
 import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupResponseDto;
 import com.sparta.spartdelivery.domain.auth.service.AuthService;
@@ -22,7 +22,7 @@ public class AuthController {
     // 회원가입
     @PostMapping("/auth/signup")
     public ResponseEntity<CommonResponseDto<AuthSignupResponseDto>> signup(
-            @Valid @RequestBody AuthSignupDtoRequest signupRequest) {
+            @Valid @RequestBody AuthSignupRequestDto signupRequest) {
 
         AuthSignupResponseDto signupResponse = authService.signup(signupRequest);
 
@@ -40,7 +40,7 @@ public class AuthController {
     // 로그인
     @PostMapping("/auth/signin")
     public ResponseEntity<CommonResponseDto<AuthSigninResponseDto>> signin(
-            @Valid @RequestBody AuthSigninDtoRequest signinRequest) {
+            @Valid @RequestBody AuthSigninRequestDto signinRequest) {
 
         AuthSigninResponseDto signinResponse = authService.signin(signinRequest);
 
