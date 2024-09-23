@@ -9,6 +9,7 @@ import com.sparta.spartdelivery.domain.menu.dto.response.MenuSaveResponseDto;
 import com.sparta.spartdelivery.domain.menu.dto.response.MenuUpdateResponseDto;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,17 +55,33 @@ public class MenuService {
 
     /* 삭제 */
     @Transactional
-    public void deleteMenu(Long menuId) {
+    public void deleteMenu(Long menuId, AuthUser authUser) {
+        /* authUser 검증 , */
+        if (authUser == null) {
+            throw new IllegalStateException("유효하지 않은 사용자입니다.");
+        }
+//        /* 사장 권한 검증 */
+//        validateOwner(authUser);
+
+        /* 메뉴 찾기*/
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(
                         ()-> new NullPointerException("삭제할 menuId가 없습니다."));
         menu.withdraw();
+
+        /* 메뉴 권한 검증 */
+        validateOwnerMenu(authUser, menuId, menu.getStoreId());
+
+        /* withdraw 상태로 변경후 저장 */
+        menu.withdraw();
+        menuRepository.save(menu);
     }
 
     public Menu findMenuById(Long menuId) {
         return menuRepository.findById(menuId)
                 .orElseThrow(() -> new NullPointerException("메뉴를 찾을 수 없습니다."));
     }
+
 
     /* 사장인지 검증 */
     public void validateOwner(AuthUser authUser) {

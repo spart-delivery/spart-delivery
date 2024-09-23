@@ -31,6 +31,11 @@ public class Menu {
         this.menuPrice=menuPrice;
         this.storeId=storeId;
     }
+
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
+    }
+
     public void update(String menuName, int menuPrice){
         this.menuName=menuName;
         this.menuPrice=menuPrice;
