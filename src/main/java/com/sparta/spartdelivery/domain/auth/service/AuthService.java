@@ -2,8 +2,8 @@ package com.sparta.spartdelivery.domain.auth.service;
 
 import com.sparta.spartdelivery.config.JwtUtil;
 import com.sparta.spartdelivery.config.PasswordEncoder;
-import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninDtoRequest;
-import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupDtoRequest;
+import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninRequestDto;
+import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupRequestDto;
 import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninResponseDto;
 import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupResponseDto;
 import com.sparta.spartdelivery.domain.auth.exception.AuthException;
@@ -25,27 +25,23 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public AuthSignupResponseDto signup(AuthSignupDtoRequest signupRequest) {
-        // 비밀번호 조건
-        if (signupRequest.getPassword().length() < 8 ||
-                !signupRequest.getPassword().matches(".*[a-z].*") || // 소문자 포함
-                !signupRequest.getPassword().matches(".*[A-Z].*") || // 대문자 포함
-                !signupRequest.getPassword().matches(".*\\d.*") ||   // 숫자 포함
-                !signupRequest.getPassword().matches(".*[!@#$%^&*(),.?\":{}|<>].*")) { // 특수문자 포함
-            throw new InvalidRequestException("비밀번호는 8자 이상이어야 하고, 영문 대소문자, 숫자, 특수문자를 최소 1글자씩 포함해야 합니다.");
-        }
-
+    public AuthSignupResponseDto signup(AuthSignupRequestDto signupRequest) {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
-
+        // UserRole 설정
         UserRole userRole = UserRole.of(signupRequest.getUserRole());
-
+        // 사용자 이메일 중복 체크
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             throw new InvalidRequestException("이미 존재하는 이메일입니다.");
+        }
+        // 사용자 이름 중복 체크
+        if (userRepository.existsByUsername(signupRequest.getUsername())) {
+            throw new InvalidRequestException("이미 존재하는 사용자 이름입니다.");
         }
 
         User newUser = new User(
                 signupRequest.getEmail(),
+                signupRequest.getUsername(),
                 encodedPassword,
                 userRole
         );
@@ -56,7 +52,7 @@ public class AuthService {
         return new AuthSignupResponseDto(bearerToken);
     }
 
-    public AuthSigninResponseDto signin(AuthSigninDtoRequest signinRequest) {
+    public AuthSigninResponseDto signin(AuthSigninRequestDto signinRequest) {
         User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
                 () -> new InvalidRequestException("가입되지 않은 유저입니다."));
 

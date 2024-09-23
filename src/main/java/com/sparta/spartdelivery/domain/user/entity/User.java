@@ -1,6 +1,5 @@
 package com.sparta.spartdelivery.domain.user.entity;
 
-// 필요한 클래스들을 임포트
 import com.sparta.spartdelivery.common.entity.Timestamped;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
 import jakarta.persistence.*;
@@ -20,6 +19,8 @@ public class User extends Timestamped {
     @Column(unique = true) // 유일한 값이어야 함
     private String email;
 
+    private String username; // 사용자의 이름 추가
+
     private String password; // 사용자의 비밀번호
 
     @Enumerated(EnumType.STRING) // 사용자 역할을 문자열로 저장
@@ -28,12 +29,14 @@ public class User extends Timestamped {
     // 사용자 삭제 여부를 나타내는 필드
     private boolean deleted = false; // 기본값은 false (삭제되지 않음)
 
-    // 사용자 생성 시 이메일, 비밀번호, 역할을 받는 생성자
-    public User(String email, String password, UserRole userRole) {
+    // 사용자 생성 시 이메일, 사용자 이름, 비밀번호, 역할을 받는 생성자
+    public User(String email, String username, String password, UserRole userRole) {
         this.email = email;
+        this.username = username;
         this.password = password;
         this.userRole = userRole;
     }
+
 
     // userId, email, userRole을 받는 생성자 (주로 다른 객체에서 사용)
     private User(Long id, String email, UserRole userRole) {
@@ -42,13 +45,13 @@ public class User extends Timestamped {
         this.userRole = userRole;
     }
 
+
     // 비밀번호를 변경하는 메서드
     public void changePassword(String password) {
         this.password = password;
     }
-//
-//    // 사용자를 삭제 상태로 변경하는 메서드
-//    public void markAsDeleted() {
-//        this.deleted = true;
-//    }
+    // 사용자를 삭제 상태로 변경하는 메서드
+    public void markAsDeleted() {
+        this.deleted = true;
+    }
 }
