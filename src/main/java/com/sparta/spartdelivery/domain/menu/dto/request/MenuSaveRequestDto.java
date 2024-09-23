@@ -7,8 +7,11 @@ public class MenuSaveRequestDto {
     private String menuName;
     private int menuPrice;
 
-    public MenuSaveRequestDto(String menuName, int menuPrice) {
+    private Long categoryId;
+
+    public MenuSaveRequestDto(String menuName, int menuPrice,Long categoryId) {
         this.menuName = menuName;
         this.menuPrice = menuPrice;
+        this.categoryId=categoryId;
     }
 }

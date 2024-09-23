@@ -29,7 +29,8 @@ public class MenuService {
         Menu newMenu = new Menu(
                 menuSaveRequestDto.getMenuName(),
                 menuSaveRequestDto.getMenuPrice(),
-                storeId);
+                storeId,
+                menuSaveRequestDto.getCategoryId());
         Menu savedMenu = menuRepository.save(newMenu);
 
         return new MenuSaveResponseDto(
@@ -96,4 +97,6 @@ public class MenuService {
             throw new IllegalArgumentException("해당 메뉴의 사장님만 수정/삭제할 수 있습니다.");
         }
     }
+
+
 }

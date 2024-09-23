@@ -46,7 +46,7 @@ public class MenuServiceTest {
         /* given
         * 가게 이름과, 메뉴를 검색했을 때 메뉴 존재하지 않도록 설정
         * save가 호출 될 때 메뉴를 반환 */
-        MenuSaveRequestDto requestDto = new MenuSaveRequestDto("Pizza", 10000);
+        MenuSaveRequestDto requestDto = new MenuSaveRequestDto("Pizza", 10000, 1L);
         when(menuRepository.findByStoreIdAndMenuName(1L, "Pizza")).thenReturn(Optional.empty());
         when(menuRepository.save(any(Menu.class))).thenAnswer(invocation -> invocation.getArguments()[0]);
 
@@ -67,13 +67,13 @@ public class MenuServiceTest {
         /* given
         1번 가게에 피자,가격10000원 이라는 메뉴 생성
         1번 가게에 Pizza를 검색 했을 때 -> 기존 메뉴 반환함 */
-        Menu existingMenu = new Menu("Pizza", 10000, 1L);
+        Menu existingMenu = new Menu("Pizza", 10000, 1L,1L);
         when(menuRepository.findByStoreIdAndMenuName(1L, "Pizza")).thenReturn(Optional.of(existingMenu));
 
         /* when
         Pizza와 가격10000원 데이터 생성
         /* 메뉴를 저장할 때 이미 똑같은 메뉴가 존재한다면 예외발생하는지 확인 */
-        MenuSaveRequestDto requestDto = new MenuSaveRequestDto("Pizza", 10000);
+        MenuSaveRequestDto requestDto = new MenuSaveRequestDto("Pizza", 10000, 1L);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             menuService.saveMenu(requestDto, 1L);
         });
@@ -89,7 +89,7 @@ public class MenuServiceTest {
         업데이트 할 기존의 메뉴 생성 (메뉴이름, 가격, 가게id)
         찾는 가게의 기존메뉴 반환
         업데이트 할 메뉴의 생성 (이름 ,가격)*/
-        Menu existingMenu = new Menu("Pizza", 10000, 1L);
+        Menu existingMenu = new Menu("Pizza", 10000, 1L,1L);
         existingMenu.setMenuId(1L);
         when(menuRepository.findById(1L)).thenReturn(Optional.of(existingMenu));
         MenuUpdateRequestDto updateRequestDto = new MenuUpdateRequestDto("UpdatePizza", 12000);
@@ -133,7 +133,7 @@ public class MenuServiceTest {
     public void deleteMenu_Success() {
         /* given
         *   */
-        Menu existingMenu = new Menu("Pizza", 10000, 1L);
+        Menu existingMenu = new Menu("Pizza", 10000, 1L, 1L);
         when(menuRepository.findById(1L)).thenReturn(Optional.of(existingMenu));
 
         /* when
@@ -171,7 +171,7 @@ public class MenuServiceTest {
     public void deleteMenu_NotOwner() {
         /* given
         *  삭제 할 메뉴는 있지만 삭제하는 사람이 owner가 아닌 경우 */
-        Menu existingMenu = new Menu("Pizza", 10000, 1L);
+        Menu existingMenu = new Menu("Pizza", 10000, 1L, 1L);
         AuthUser notOwnerUser = new AuthUser(2L, "otherUser", UserRole.USER); // owner가 아닌 일반사용자
         when(menuRepository.findById(1L)).thenReturn(Optional.of(existingMenu));
 
