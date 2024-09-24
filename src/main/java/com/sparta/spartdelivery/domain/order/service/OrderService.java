@@ -52,12 +52,10 @@ public class OrderService {
             throw new IllegalAccessException("최소 주문 금액 이상 주문해야 합니다.");
         }
 
-        // 다른 가게 메뉴를 주문하는지 체크 -> 장바구니 구현 시 throw 대신에  ~~~~~
         if (!Objects.equals(store.getStoreId(), menu.getStoreId())) {
             throw new IllegalAccessException("해당 가게의 메뉴만 주문할 수 있습니다.");
         }
 
-        // 오픈시간 이전, 마감시간 이후에는 주문 불가 처리
         LocalTime now = LocalDateTime.now().toLocalTime();
         LocalTime openTime = store.getOpenTime().toLocalTime();
         LocalTime closeTime = store.getCloseTime().toLocalTime();
@@ -80,7 +78,7 @@ public class OrderService {
     public List<OrderResponseDto> getAllOrders(AuthUser authUser) throws IllegalAccessException {
 
         User user = findByNullableId(userRepository, authUser.getId(), "존재하지 않는 사용자입니다.");
-        ownerCheck(user);
+        ownerCheck(authUser);
         List<Order> orders = orderRepository.findAll();
 
         if (orders.isEmpty()) {
@@ -109,10 +107,10 @@ public class OrderService {
         User user = findByNullableId(userRepository, authUser.getId(), "존재하지 않는 사용자입니다.");
         Order order = findByNullableId(orderRepository, orderId, "존재하지 않는 주문입니다.");
 
-        ownerCheck(user);
+        ownerCheck(authUser);
 
         if (orderRequestDto.getStatus() == null) {
-            throw new IllegalAccessException("변경할 상태를 입력해 주세요.");
+            throw new NullPointerException("변경할 상태를 입력해 주세요.");
         }
 
         // 주문 상태를 '주문 수락' 으로 변경할 때 / 주문 상태를 '배달 완료' 로 변경할 때
@@ -132,8 +130,8 @@ public class OrderService {
                 .orElseThrow(() -> new NullPointerException(errorMsg));
     }
 
-    public void ownerCheck(User user) throws IllegalAccessException {
-        if (user.getUserRole() != UserRole.OWNER) {
+    public void ownerCheck(AuthUser authUser) throws IllegalAccessException {
+        if (authUser.getUserRole() != UserRole.OWNER) { // 내가 사장인지
             throw new IllegalAccessException("가게의 사장님만 접근할 수 있습니다.");
         }
     }
