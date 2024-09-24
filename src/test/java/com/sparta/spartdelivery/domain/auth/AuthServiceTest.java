@@ -4,6 +4,7 @@ import com.sparta.spartdelivery.config.JwtUtil;
 import com.sparta.spartdelivery.config.PasswordEncoder;
 import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupRequestDto;
 import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupResponseDto;
+import com.sparta.spartdelivery.domain.auth.exception.AuthException;
 import com.sparta.spartdelivery.domain.auth.service.AuthService;
 import com.sparta.spartdelivery.domain.user.entity.User;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
@@ -77,6 +78,6 @@ public class AuthServiceTest {
         when(userRepository.existsByEmail(signupRequest.getEmail())).thenReturn(true);
 
         // Act & Assert
-        assertThrows(UserException.class, () -> authService.signup(signupRequest));
+        assertThrows(AuthException.class, () -> authService.signup(signupRequest));
     }
 }

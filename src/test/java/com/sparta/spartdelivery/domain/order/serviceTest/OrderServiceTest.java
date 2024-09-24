@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -87,8 +88,8 @@ public class OrderServiceTest {
                 store = Store.builder()
                         .userId(1L)
                         .storeName("")
-                        .openTime(LocalDateTime.of(2024, 10, 01, 00, 00, 00))
-                        .closeTime(LocalDateTime.of(2024, 10, 02, 00, 00, 00))
+                        .openTime(LocalTime.of(10, 00, 00))
+                        .closeTime(LocalTime.of(14, 00, 00))
                         .minOrderPrice(15000)
                         .statusOpen(true)
                         .statusShutdown(false)
@@ -141,8 +142,8 @@ public class OrderServiceTest {
                 store = Store.builder()
                         .userId(1L)
                         .storeName("")
-                        .openTime(LocalDateTime.of(2024, 10, 01, 00, 00, 00))
-                        .closeTime(LocalDateTime.of(2024, 10, 02, 00, 00, 00))
+                        .openTime(LocalTime.of(12, 00, 00))
+                        .closeTime(LocalTime.of(14, 00, 00))
                         .minOrderPrice(15000)
                         .statusOpen(true)
                         .statusShutdown(false)
