@@ -77,7 +77,7 @@ public class OrderService {
      * @return 주문 내역 DTO 리스트
      * @throws IllegalAccessException 부적절한 접근 예외 처리
      */
-    public List<OrderResponseDto> getAllOrders(AuthUser authUser) throws IllegalAccessException {
+    public List<OrderResponseDto> getAllOrders(AuthUser authUser) {
 
         User user = findByNullableId(userRepository, authUser.getId(), "존재하지 않는 사용자입니다.");
         ownerCheck(authUser);
