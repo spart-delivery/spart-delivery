@@ -21,8 +21,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MenuCategoryService {
 
+
     private final MenuRepository menuRepository;
-    private MenuCategoryRepository menuCategoryRepository;
+    private final MenuCategoryRepository menuCategoryRepository;
 
     /* 카테고리 생성  */
     @Transactional
