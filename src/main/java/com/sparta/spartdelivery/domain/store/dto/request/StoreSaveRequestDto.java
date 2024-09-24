@@ -3,11 +3,13 @@ package com.sparta.spartdelivery.domain.store.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class StoreSaveRequestDto {
 
     @NotBlank(message = "가게명은 필수 파라미터 입니다.")
