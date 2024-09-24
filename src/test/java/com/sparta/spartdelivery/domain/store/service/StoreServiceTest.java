@@ -214,7 +214,6 @@ class StoreServiceTest {
         // Given: 정상적인 가게 수정
         given(storeRepository.findByStoreName(storeEditRequestDto.getStoreName()))
                 .willReturn(Collections.emptyList());  // 이름 중복 없음
-
         given(storeRepository.findById(store.getStoreId())).willReturn(Optional.of(store));
 
         given(dateTImeService.getCurrentDateTime(storeEditRequestDto.getOpenTime()))
