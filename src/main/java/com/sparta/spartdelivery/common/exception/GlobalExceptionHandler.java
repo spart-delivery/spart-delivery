@@ -65,9 +65,14 @@ public class GlobalExceptionHandler{
     }
 
     @ExceptionHandler(IllegalAccessException.class)
-    public ResponseEntity<CommonResponseDto<Object>> IllegalAccessException(IllegalAccessException ex) {
+    public ResponseEntity<CommonResponseDto<Object>> handleIllegalAccessException(IllegalAccessException ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return getErrorResponse(status, ex.getMessage());
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<CommonResponseDto<Object>> handleNullPointerException(NullPointerException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST; // 적절한 HTTP 상태 코드 선택
+        return getErrorResponse(status, "Null pointer exception occurred: " + ex.getMessage());
+    }
 }
