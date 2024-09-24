@@ -1,5 +1,6 @@
 package com.sparta.spartdelivery.domain.review.service;
 
+import com.sparta.spartdelivery.common.annotation.Auth;
 import com.sparta.spartdelivery.common.dto.AuthUser;
 import com.sparta.spartdelivery.domain.order.entity.Order;
 import com.sparta.spartdelivery.domain.order.entity.OrderStatus;
@@ -10,6 +11,7 @@ import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewEditResponse
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewReadResponseDto;
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewSaveResponseDto;
 import com.sparta.spartdelivery.domain.review.entity.Review;
+import com.sparta.spartdelivery.domain.review.exception.NotFoundReviewException;
 import com.sparta.spartdelivery.domain.review.repository.ReviewRepository;
 import com.sparta.spartdelivery.domain.store.entity.Store;
 import com.sparta.spartdelivery.domain.store.repository.StoreRepository;
@@ -32,21 +34,18 @@ public class ReviewService {
     // 리뷰 작성
     public ReviewSaveResponseDto saveReview(AuthUser authUser, ReviewSaveRequestDto reviewSaveRequestDto, Long orderId) {
 
-        Long userId = authUser.getId();
+        // 유저확인
+        validateUser(authUser);
 
-        // 유저 확인
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
-        }
+        // 주문 확인절차
+        Order order = orderRepository.findById(orderId).orElseThrow(() ->
+                new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
+
 
         // 이미 해당 주문이 존재하면 오류발생
         if (reviewRepository.existsByOrderId(orderId)) {
             throw new IllegalArgumentException("해당 주문에 대한 리뷰가 이미 존재합니다.");
         }
-
-        // 주문 확인절차
-        Order order = orderRepository.findById(orderId).orElseThrow(() ->
-                new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
 
         // 주문 상태가 COMPLETED 인지 확인
         if (!order.getStatus().equals(OrderStatus.COMPLETED)) {
@@ -57,28 +56,24 @@ public class ReviewService {
         validateStarPoint(reviewSaveRequestDto.getStarPoint());
 
         // 테이블 저장
-        Review review = reviewRepository.save(new Review(reviewSaveRequestDto, userId, orderId));
+        Review review = reviewRepository.save(new Review(reviewSaveRequestDto, authUser.getId(), orderId));
 
         return new ReviewSaveResponseDto(review);
     }
 
-    @Transactional
     // 리뷰 수정
+    @Transactional
     public ReviewEditResponseDto editReview(AuthUser authUser, ReviewEditRequestDto reviewEditRequestDto, Long reviewId) {
 
-        Long userId = authUser.getId();
+        // 유저확인
 
-        // 유저 확인 절차
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
-        }
+        validateUser(authUser);
 
         // 유저 본인 작성 리뷰인지 확인 절차
-        validateAuthReview(reviewId, userId);
+        validateAuthReview(reviewId, authUser.getId());
 
         // 리뷰 조회
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-                new IllegalArgumentException("해당 리뷰는 없습니다."));
+        Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
 
         // 별점 입력값 확인(1 ~ 5)
         validateStarPoint(reviewEditRequestDto.getStarPoint());
@@ -110,15 +105,23 @@ public class ReviewService {
     // 리뷰 삭제
     public void deleteReview(AuthUser authUser, Long reviewId) {
 
-        Long userId = authUser.getId();
+        validateUser(authUser);
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
 
         // 유저 본인 작성 리뷰인지 확인 절차
-        validateAuthReview(reviewId, userId);
-
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-                new IllegalArgumentException("해당 리뷰는 없습니다."));
+        validateAuthReview(reviewId, authUser.getId());
 
         reviewRepository.deleteById(reviewId);
+    }
+
+    // 유저 확인 메서드
+    private void validateUser(AuthUser authUser) {
+        Long userId = authUser.getId();
+
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
+        }
     }
 
     // 별점 입력값 확인 메서드
