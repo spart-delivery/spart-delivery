@@ -1,4 +1,4 @@
-package com.sparta.spartdelivery.domain.service.menu;
+package com.sparta.spartdelivery.domain.menu.service;
 
 import com.sparta.spartdelivery.domain.menu.dto.request.MenuSaveRequestDto;
 import com.sparta.spartdelivery.domain.menu.dto.request.MenuUpdateRequestDto;
@@ -6,6 +6,7 @@ import com.sparta.spartdelivery.domain.menu.dto.response.MenuSaveResponseDto;
 import com.sparta.spartdelivery.domain.menu.dto.response.MenuUpdateResponseDto;
 import com.sparta.spartdelivery.domain.menu.entity.Menu;
 import com.sparta.spartdelivery.domain.menu.entity.MenuStatus;
+import com.sparta.spartdelivery.domain.menu.exception.*;
 import com.sparta.spartdelivery.domain.menu.repository.MenuRepository;
 import com.sparta.spartdelivery.domain.menu.service.MenuService;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
@@ -44,8 +45,8 @@ public class MenuServiceTest {
     public void saveMenu_Success() {
 
         /* given
-        * 가게 이름과, 메뉴를 검색했을 때 메뉴 존재하지 않도록 설정
-        * save가 호출 될 때 메뉴를 반환 */
+         * 가게 이름과, 메뉴를 검색했을 때 메뉴 존재하지 않도록 설정
+         * save가 호출 될 때 메뉴를 반환 */
         MenuSaveRequestDto requestDto = new MenuSaveRequestDto("Pizza", 10000, 1L);
         when(menuRepository.findByStoreIdAndMenuName(1L, "Pizza")).thenReturn(Optional.empty());
         when(menuRepository.save(any(Menu.class))).thenAnswer(invocation -> invocation.getArguments()[0]);
@@ -67,14 +68,14 @@ public class MenuServiceTest {
         /* given
         1번 가게에 피자,가격10000원 이라는 메뉴 생성
         1번 가게에 Pizza를 검색 했을 때 -> 기존 메뉴 반환함 */
-        Menu existingMenu = new Menu("Pizza", 10000, 1L,1L);
+        Menu existingMenu = new Menu("Pizza", 10000, 1L, 1L);
         when(menuRepository.findByStoreIdAndMenuName(1L, "Pizza")).thenReturn(Optional.of(existingMenu));
 
         /* when
         Pizza와 가격10000원 데이터 생성
         /* 메뉴를 저장할 때 이미 똑같은 메뉴가 존재한다면 예외발생하는지 확인 */
         MenuSaveRequestDto requestDto = new MenuSaveRequestDto("Pizza", 10000, 1L);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(MenuExistsException.class, () -> {
             menuService.saveMenu(requestDto, 1L);
         });
 
@@ -89,9 +90,9 @@ public class MenuServiceTest {
         업데이트 할 기존의 메뉴 생성 (메뉴이름, 가격, 가게id)
         찾는 가게의 기존메뉴 반환
         업데이트 할 메뉴의 생성 (이름 ,가격)*/
-        Menu existingMenu = new Menu("Pizza", 10000, 1L,1L);
+        Menu existingMenu = new Menu("Pizza", 10000, 1L, 1L);
         existingMenu.setMenuId(1L);
-        when(menuRepository.findById(1L)).thenReturn(Optional.of(existingMenu));
+        when(menuRepository.findByMenuId(1L)).thenReturn(Optional.of(existingMenu));
         MenuUpdateRequestDto updateRequestDto = new MenuUpdateRequestDto("UpdatePizza", 12000);
 
         /* when
@@ -113,13 +114,13 @@ public class MenuServiceTest {
         /* given
         빈 Optinal을 반환
         업데이트 할 메뉴 dto 새엇ㅇ ( 이름, 가격 ) */
-        when(menuRepository.findById(1L)).thenReturn(Optional.empty());
+        when(menuRepository.findByMenuId(1L)).thenReturn(Optional.empty());
 
         MenuUpdateRequestDto updateRequestDto = new MenuUpdateRequestDto("UpdatePizza", 12000);
 
         /* when
          메뉴가 존재하지 않을때 예외발생하는지 확인 */
-        Exception exception = assertThrows(NullPointerException.class, () -> {
+        Exception exception = assertThrows(MenuIdNotFoundException.class, () -> {
             menuService.updateMenu(1L, updateRequestDto);
         });
 
@@ -132,13 +133,13 @@ public class MenuServiceTest {
     @Test
     public void deleteMenu_Success() {
         /* given
-        *   */
+         *   */
         Menu existingMenu = new Menu("Pizza", 10000, 1L, 1L);
-        when(menuRepository.findById(1L)).thenReturn(Optional.of(existingMenu));
+        when(menuRepository.findByMenuId(1L)).thenReturn(Optional.of(existingMenu));
 
         /* when
-        * 메뉴1번 삭제요청 */
-        menuService.deleteMenu(1L,authUser);
+         * 메뉴1번 삭제요청 */
+        menuService.deleteMenu(1L, authUser);
 
         /* then
         메뉴의 상태가 WITHDRAWN으로 변경되어야 함
@@ -152,17 +153,17 @@ public class MenuServiceTest {
     public void deleteMenu_MenuNotFound() {
         /* given
          메뉴가 존재하지 않을 때  */
-        when(menuRepository.findById(1L)).thenReturn(Optional.empty());
+        when(menuRepository.findByMenuId(1L)).thenReturn(Optional.empty());
 
         /* when
-        * 메뉴를 삭제 할 때, 메뉴가 없으면 예외발생 */
+         * 메뉴를 삭제 할 때, 메뉴가 없으면 예외발생 */
 
-        Exception exception = assertThrows(NullPointerException.class, () -> {
+        Exception exception = assertThrows(MenuIdNotFoundException.class, () -> {
             menuService.deleteMenu(1L, authUser);
         });
 
         /* then
-        *  예상한 예외메시지가 나오는지 확인 */
+         *  예상한 예외메시지가 나오는지 확인 */
         assertEquals("삭제할 menuId가 없습니다.", exception.getMessage());
     }
 
@@ -170,19 +171,19 @@ public class MenuServiceTest {
     @Test
     public void deleteMenu_NotOwner() {
         /* given
-        *  삭제 할 메뉴는 있지만 삭제하는 사람이 owner가 아닌 경우 */
+         *  삭제 할 메뉴는 있지만 삭제하는 사람이 owner가 아닌 경우 */
         Menu existingMenu = new Menu("Pizza", 10000, 1L, 1L);
         AuthUser notOwnerUser = new AuthUser(2L, "otherUser", UserRole.USER); // owner가 아닌 일반사용자
-        when(menuRepository.findById(1L)).thenReturn(Optional.of(existingMenu));
+        when(menuRepository.findByMenuId(1L)).thenReturn(Optional.of(existingMenu));
 
         /* when
-        * owner가 아닌 사용자가 삭제 요청할때 예외메세지 반환 */
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+         * owner가 아닌 사용자가 삭제 요청할때 예외메세지 반환 */
+        Exception exception = assertThrows(StoreOwnerDefinedException.class, () -> {
             menuService.deleteMenu(1L, notOwnerUser);
         });
 
         /* then
-        * 예상한 예상메시지 확인  */
+         * 예상한 예상메시지 확인  */
         assertEquals("해당 메뉴의 사장님만 수정/삭제할 수 있습니다.", exception.getMessage());
     }
 
