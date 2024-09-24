@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDeleteRequestDto {
-    private String password;
 
+    private String password;
 }

@@ -33,7 +33,7 @@ public class AuthController {
                 signupResponse
         );
 
-        // ResponseEntity를 사용하여 응답 반환
+        // ResponseEntity를 사용하여 응답 반환 서버가 클라이언트에게 응답을 보내는 부분
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
