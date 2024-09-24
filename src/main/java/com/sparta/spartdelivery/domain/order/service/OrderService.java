@@ -41,7 +41,6 @@ public class OrderService {
      * @param authUser 로그인한 사용자
      * @param orderRequestDto 사용자의 입력 데이터 DTO
      * @return 새 주문
-     * @throws IllegalAccessException 부적절한 접근 예외 처리
      */
     @Transactional
     public Order sendOrder(AuthUser authUser, OrderRequestDto orderRequestDto) {
@@ -75,7 +74,6 @@ public class OrderService {
      * 들어온 주문 내역 조회하기 ( 사장님만 해당 )
      * @param authUser 로그인한 사용자
      * @return 주문 내역 DTO 리스트
-     * @throws IllegalAccessException 부적절한 접근 예외 처리
      */
     public List<OrderResponseDto> getAllOrders(AuthUser authUser) {
 
