@@ -9,6 +9,8 @@ import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewEditResponse
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewReadResponseDto;
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewSaveResponseDto;
 import com.sparta.spartdelivery.domain.review.entity.Review;
+import com.sparta.spartdelivery.domain.review.exception.ExistReviewException;
+import com.sparta.spartdelivery.domain.review.exception.NotFoundReviewException;
 import com.sparta.spartdelivery.domain.review.repository.ReviewRepository;
 import com.sparta.spartdelivery.domain.review.service.ReviewService;
 import com.sparta.spartdelivery.domain.store.entity.Store;
@@ -115,7 +117,7 @@ class ReviewServiceTest {
         when(reviewRepository.existsByOrderId(orderId)).thenReturn(true);
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        ExistReviewException exception = assertThrows(ExistReviewException.class,
                 () -> reviewService.saveReview(authUser, reviewSaveRequestDto, orderId));
         assertEquals("해당 주문에 대한 리뷰가 이미 존재합니다.", exception.getMessage());
     }
@@ -162,7 +164,7 @@ class ReviewServiceTest {
         when(reviewRepository.existsByReviewIdAndUserId(review.getReviewId(), authUser.getId())).thenReturn(true);
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+        NotFoundReviewException exception = assertThrows(NotFoundReviewException.class, () ->
                 reviewService.editReview(authUser, reviewEditRequestDto, review.getReviewId()));
 
         assertEquals("해당 리뷰는 없습니다.", exception.getMessage());

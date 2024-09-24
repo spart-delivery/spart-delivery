@@ -11,6 +11,8 @@ import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewEditResponse
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewReadResponseDto;
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewSaveResponseDto;
 import com.sparta.spartdelivery.domain.review.entity.Review;
+import com.sparta.spartdelivery.domain.review.exception.DoNotReviewUnCompletedOrderException;
+import com.sparta.spartdelivery.domain.review.exception.ExistReviewException;
 import com.sparta.spartdelivery.domain.review.exception.NotFoundReviewException;
 import com.sparta.spartdelivery.domain.review.repository.ReviewRepository;
 import com.sparta.spartdelivery.domain.store.entity.Store;
@@ -44,12 +46,12 @@ public class ReviewService {
 
         // 이미 해당 주문이 존재하면 오류발생
         if (reviewRepository.existsByOrderId(orderId)) {
-            throw new IllegalArgumentException("해당 주문에 대한 리뷰가 이미 존재합니다.");
+            throw new ExistReviewException();
         }
 
         // 주문 상태가 COMPLETED 인지 확인
         if (!order.getStatus().equals(OrderStatus.COMPLETED)) {
-            throw new IllegalArgumentException("리뷰는 완료된 주문에 한해서만 작성할 수 있습니다.");
+            throw new DoNotReviewUnCompletedOrderException();
         }
 
         // 별점 입력값 확인(1 ~ 5)
