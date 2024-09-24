@@ -4,11 +4,10 @@ import com.sparta.spartdelivery.config.JwtUtil;
 import com.sparta.spartdelivery.config.PasswordEncoder;
 import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupRequestDto;
 import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupResponseDto;
-import com.sparta.spartdelivery.domain.auth.exception.AuthException;
+import com.sparta.spartdelivery.domain.auth.exception.EmailAlreadyExistsException;
 import com.sparta.spartdelivery.domain.auth.service.AuthService;
 import com.sparta.spartdelivery.domain.user.entity.User;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
-import com.sparta.spartdelivery.domain.user.exception.UserException;
 import com.sparta.spartdelivery.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,7 +65,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void 회원가입_이메일이이미존재할때_InvalidRequestException발생() {
+    public void 회원가입_이메일이이미존재할때_EmailAlreadyExistsException발생() {
         // given
         AuthSignupRequestDto signupRequest = new AuthSignupRequestDto();
         signupRequest.setEmail("test@example.com");
@@ -74,10 +73,10 @@ public class AuthServiceTest {
         signupRequest.setPassword("password123");
         signupRequest.setUserRole("USER");
 
-        // Arrange
+
         when(userRepository.existsByEmail(signupRequest.getEmail())).thenReturn(true);
 
-        // Act & Assert
-        assertThrows(AuthException.class, () -> authService.signup(signupRequest));
+        assertThrows(EmailAlreadyExistsException.class, () -> authService.signup(signupRequest));
+
     }
 }
