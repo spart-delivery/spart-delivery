@@ -18,4 +18,6 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     /* categoryId */
     List<Menu> findByCategoryId(Long categoryId);
+    /* */
+    Optional<Menu> findByMenuId(Long menuId);
 }
