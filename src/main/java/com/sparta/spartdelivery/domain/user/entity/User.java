@@ -41,13 +41,6 @@ public class User extends Timestamped {
     }
 
 
-//    // userId, email, userRole을 받는 생성자 (주로 다른 객체에서 사용)
-//    private User(Long id, String email, UserRole userRole) {
-//        this.userId = id;
-//        this.email = email;
-//        this.userRole = userRole;
-//    }
-
     // 비밀번호를 변경하는 메서드
     public void changePassword(String password) {
         this.password = password;
