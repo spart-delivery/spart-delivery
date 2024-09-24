@@ -1,8 +1,7 @@
 package com.sparta.spartdelivery.domain.user.enums;
 
+import com.sparta.spartdelivery.domain.user.exception.InvalidUserRoleException;
 
-
-import com.sparta.spartdelivery.domain.user.exception.UserException;
 
 import java.util.Arrays;
 //두 가지 종류의 역할(OWNER, USER)을 정의
@@ -15,6 +14,6 @@ public enum UserRole {
                 .filter(r -> r.name().equalsIgnoreCase(role))
                 .findFirst()
                 //만약 OWNER나 USER 중 하나가 아니라면, UserException 이라는 오류를 발생
-                .orElseThrow(() -> new UserException("유효하지 않은 UerRole"));
+                .orElseThrow(() -> new InvalidUserRoleException());
     }
 }
