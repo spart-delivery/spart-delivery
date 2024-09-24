@@ -33,15 +33,15 @@ public class ReviewService {
     private final UserRepository userRepository;
 
     // 리뷰 작성
-    public ReviewSaveResponseDto saveReview(AuthUser authUser, ReviewSaveRequestDto reviewSaveRequestDto, Long orderId) {
-
+    public ReviewSaveResponseDto saveReview(AuthUser authUser,
+                                            ReviewSaveRequestDto reviewSaveRequestDto,
+                                            Long orderId) {
         // 유저확인
         validateUser(authUser);
 
         // 주문 확인절차
         Order order = orderRepository.findById(orderId).orElseThrow(() ->
                 new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
-
 
         // 이미 해당 주문이 존재하면 오류발생
         if (reviewRepository.existsByOrderId(orderId)) {
@@ -66,17 +66,12 @@ public class ReviewService {
     @Transactional
     public ReviewEditResponseDto editReview(AuthUser authUser, ReviewEditRequestDto reviewEditRequestDto, Long reviewId) {
 
-        // 유저확인
-
         validateUser(authUser);
 
-        // 유저 본인 작성 리뷰인지 확인 절차
         validateAuthReview(reviewId, authUser.getId());
 
-        // 리뷰 조회
         Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
 
-        // 별점 입력값 확인(1 ~ 5)
         validateStarPoint(reviewEditRequestDto.getStarPoint());
 
         // 수정내용 저장
@@ -110,7 +105,6 @@ public class ReviewService {
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(NotFoundReviewException::new);
 
-        // 유저 본인 작성 리뷰인지 확인 절차
         validateAuthReview(reviewId, authUser.getId());
 
         reviewRepository.deleteById(reviewId);
