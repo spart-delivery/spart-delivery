@@ -57,8 +57,8 @@ public class OrderService {
         }
 
         LocalTime now = LocalDateTime.now().toLocalTime();
-        LocalTime openTime = store.getOpenTime().toLocalTime();
-        LocalTime closeTime = store.getCloseTime().toLocalTime();
+        LocalTime openTime = store.getOpenTime();
+        LocalTime closeTime = store.getCloseTime();
 
         if (now.isBefore(openTime) || now.isAfter(closeTime)) {
             throw new IllegalAccessException("영업시간 이외의 주문은 불가합니다.");

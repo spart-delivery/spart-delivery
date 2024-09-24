@@ -52,7 +52,7 @@ public class MenuController {
         Menu menu = menuService.findMenuById(menuId);
         Long storeId = menu.getStoreId();
         menuService.validateOwnerMenu(authUser, menuId, storeId);
-        menuService.deleteMenu(menuId);
+        menuService.deleteMenu(menuId, authUser);
         CommonResponseDto<Void> deleteResponseDto = new CommonResponseDto<>(HttpStatus.OK, "success",null);
         return ResponseEntity.ok(deleteResponseDto);
     }
