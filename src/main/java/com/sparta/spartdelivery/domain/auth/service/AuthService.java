@@ -6,7 +6,7 @@ import com.sparta.spartdelivery.domain.auth.dto.request.AuthSigninRequestDto;
 import com.sparta.spartdelivery.domain.auth.dto.request.AuthSignupRequestDto;
 import com.sparta.spartdelivery.domain.auth.dto.response.AuthSigninResponseDto;
 import com.sparta.spartdelivery.domain.auth.dto.response.AuthSignupResponseDto;
-import com.sparta.spartdelivery.domain.auth.exception.AuthException;
+import com.sparta.spartdelivery.domain.auth.exception.*;
 import com.sparta.spartdelivery.domain.user.entity.User;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
 import com.sparta.spartdelivery.domain.user.repository.UserRepository;
@@ -29,12 +29,12 @@ public class AuthService {
     public AuthSignupResponseDto signup(AuthSignupRequestDto signupRequest) {
         // 이메일 중복 체크 //검증 로직 먼저 올리기
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            throw new AuthException("이미 존재하는 이메일입니다.");
+            throw new EmailAlreadyExistsException();
         }
 
         // 사용자 이름 중복 체크
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
-            throw new AuthException("이미 존재하는 사용자 이름입니다.");
+            throw new UsernameAlreadyExistsException();
         }
         // 사용자가 입력한 역할(Role)을 UserRole enum으로 변환
         UserRole userRole = UserRole.of(signupRequest.getUserRole());
@@ -66,12 +66,12 @@ public class AuthService {
     public AuthSigninResponseDto signin(AuthSigninRequestDto signinRequest) {
         // 이메일로 유저 찾기
         User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
-                () -> new AuthException("가입되지 않은 유저입니다.")
+                () -> new UserNotRegisteredException()
         );
 
         // 입력된 비밀번호가 저장된 비밀번호와 일치하지 않으면 예외 발생
         if (!passwordEncoder.matches(signinRequest.getPassword(), user.getPassword())) {
-            throw new AuthException("잘못된 비밀번호입니다.");
+            throw new AuthInvalidPasswordException();
         }
 
         // 유저 정보를 바탕으로 JWT 토큰 생성
