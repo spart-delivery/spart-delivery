@@ -214,14 +214,16 @@ class StoreServiceTest {
         // Given: 정상적인 가게 수정
         given(storeRepository.findByStoreName(storeEditRequestDto.getStoreName()))
                 .willReturn(Collections.emptyList());  // 이름 중복 없음
-        given(storeRepository.findById(store.getStoreId())).willReturn(Optional.of(store));
 
-        LocalDateTime currentTime = LocalDateTime.now();
+        given(storeRepository.findById(store.getStoreId())).willReturn(Optional.of(store));
 
         given(dateTImeService.getCurrentDateTime(storeEditRequestDto.getOpenTime()))
                 .willReturn(LocalTime.parse(storeEditRequestDto.getOpenTime()));
+
+        // 10:00
         given(dateTImeService.getCurrentDateTime(storeEditRequestDto.getCloseTime()))
                 .willReturn(LocalTime.parse(storeEditRequestDto.getCloseTime()));
+        // 12:00
 
         // When
         StoreEditResponseDto responseDto = storeService.updateStore(authUser, store.getStoreId(), storeEditRequestDto);
@@ -229,8 +231,9 @@ class StoreServiceTest {
         // Then
         assertNotNull(responseDto);
         assertEquals("배떡 2호점", store.getStoreName());  // 이름이 변경되었는지 확인
-        assertEquals(currentTime.withHour(10).withMinute(0), store.getOpenTime());  // 오픈 시간 확인
-        assertEquals(currentTime.withHour(12).withMinute(0), store.getCloseTime());  // 마감 시간 확인
+        // 2024-03-01 10:00:00
+        assertEquals(LocalTime.of(12, 0), store.getOpenTime());  // 오픈 시간 확인
+        assertEquals(LocalTime.of(17, 0), store.getCloseTime());  // 마감 시간 확인
         assertEquals(15000, store.getMinOrderPrice());  // 최소 주문 가격 확인
 
     }
@@ -273,7 +276,7 @@ class StoreServiceTest {
 
         // Given: storeId가 1인 Store와 해당 가게의 메뉴들
         List<Menu> mockMenus = new ArrayList<>();
-        Menu menu1 = new Menu("Pizza", 10000, store.getStoreId());
+        Menu menu1 = new Menu("Pizza", 10000, store.getStoreId(), 1L);
         mockMenus.add(menu1);
 
         when(menuRepository.findAllActiveByStoreId(store.getStoreId())).thenReturn(mockMenus);
@@ -315,7 +318,11 @@ class StoreServiceTest {
 
         storeService.storeClose(authUser, store.getStoreId());
 
-//        assertEquals(true, store.getStatusShutdown());
+        // 폐업 처리면 true
+        assertEquals(true, store.isStatusShutdown());
+
+        // 가게 문을 닫았으니 fasle
+        assertEquals(false, store.isStatusOpen());
     }
 
 }
