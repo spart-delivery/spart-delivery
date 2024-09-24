@@ -37,15 +37,15 @@ public class StoreService {
     public StoreSaveResponseDto saveStore(AuthUser authUser, StoreSaveRequestDto storeSaveRequestDto) {
 
         if(!authUser.getUserRole().equals(UserRole.OWNER)){
-            throw new PermissionDefinedOwnerException(HttpStatus.UNAUTHORIZED, "사장님 권한을 가진 유저만 가게를 만들 수 있습니다.");
+            throw new PermissionDefinedOwnerException();
         }
 
         if(storeRepository.findByUserId(authUser.getId()).size() >= 3){
-            throw new PermissionDefinedOwnerException(HttpStatus.BAD_REQUEST, "사장님은 가게를 최대 3개까지만 운영할 수 있습니다.");
+            throw new MaxCountStoreException();
         }
 
         if(StreamSupport.stream(storeRepository.findByStoreName(storeSaveRequestDto.getStoreName()).spliterator(), false).findAny().isPresent()){
-            throw new StoreNameIsExitsException(HttpStatus.BAD_REQUEST, "해당 이름을 가진 가게가 이미 존재합니다.");
+            throw new StoreNameIsExitsException();
         }
 
         try {
@@ -80,7 +80,7 @@ public class StoreService {
 
         // 이름 중복 체크
         if(!store.getStoreName().equals(storeEditRequestDto.getStoreName()) && StreamSupport.stream(storeRepository.findByStoreName(storeEditRequestDto.getStoreName()).spliterator(), false).findAny().isPresent()){
-            throw new StoreNameIsExitsException(HttpStatus.BAD_REQUEST, "해당 이름을 가진 가게가 이미 존재합니다.");
+            throw new StoreNameIsExitsException();
         }
 
         try {
@@ -154,12 +154,12 @@ public class StoreService {
 
 
     public Store getStore(Long storeId) {
-        return storeRepository.findByStoreId(storeId).orElseThrow(() -> new NotFoundStoreException(HttpStatus.BAD_REQUEST, "상점을 찾을 수 없습니다."));
+        return storeRepository.findByStoreId(storeId).orElseThrow(NotFoundStoreException::new);
     }
 
     public void checkPermission(Long requestUserId, Long targetUserId){
         if(!requestUserId.equals(targetUserId))
-            throw new PermissionDefinedStoreUpdateException(HttpStatus.UNAUTHORIZED, "해당 가게에 대한 권한이 없습니다.");
+            throw new PermissionDefinedStoreUpdateException();
     }
 
 
@@ -181,7 +181,7 @@ public class StoreService {
     public List<StoreStatisticsResponseDto> storeStatistics(AuthUser authUser, StoreStatisticsRequestDto storeStatisticsRequestDto) {
 
         if(!authUser.getUserRole().equals(UserRole.OWNER)){
-            throw new PermissionDefinedOwnerException(HttpStatus.UNAUTHORIZED, "사장님 권한을 가진 유저만 조회가 가능합니다.");
+            throw new PermissionDefinedOwnerException();
         }
 
         if(storeStatisticsRequestDto.getDataType().equals("month") && (!storeStatisticsRequestDto.getStartDate().matches("^\\d{4}-\\d{2}$") || !storeStatisticsRequestDto.getEndDate().matches("^\\d{4}-\\d{2}$"))){
