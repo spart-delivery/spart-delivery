@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 
 public class AuthException extends CommonException {
 
-    public AuthException(String message) {
-        super(HttpStatus.UNAUTHORIZED, message);
+    public AuthException() {
+        super(HttpStatus.UNAUTHORIZED, "@Auth와 AuthUser 타입은 함께 사용되어야 합니다.");
     }
 }
 

@@ -4,7 +4,9 @@ import com.sparta.spartdelivery.domain.user.enums.UserRole;
 import com.sparta.spartdelivery.config.PasswordEncoder;
 import com.sparta.spartdelivery.domain.user.dto.request.UserChangePasswordRequestDto;
 import com.sparta.spartdelivery.domain.user.entity.User;
-import com.sparta.spartdelivery.domain.user.exception.UserException;
+import com.sparta.spartdelivery.domain.user.exception.AlreadyDeletedUserException;
+import com.sparta.spartdelivery.domain.user.exception.UserInvalidPasswordException;
+import com.sparta.spartdelivery.domain.user.exception.UserNotFoundException;
 import com.sparta.spartdelivery.domain.user.repository.UserRepository;
 import com.sparta.spartdelivery.domain.user.service.UserService;
 
@@ -46,11 +48,11 @@ public class UserServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        UserException exception = assertThrows(UserException.class, () -> {
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.changePassword(userId, requestDto);
         });
 
-        assertEquals("User not found", exception.getMessage());
+        assertEquals("사용자를 찾을 수 없습니다.", exception.getMessage());
     }
     @Test
     public void 비밀번호_변경_성공() {
@@ -83,7 +85,7 @@ public class UserServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        UserException exception = assertThrows(UserException.class, () -> {
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             userService.deleteUser(userId, password);
         });
 
@@ -101,11 +103,11 @@ public class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(false); // 비밀번호 불일치
 
-        UserException exception = assertThrows(UserException.class, () -> {
+        UserInvalidPasswordException exception = assertThrows(UserInvalidPasswordException.class, () -> {
             userService.deleteUser(userId, password);
         });
 
-        assertEquals("비밀번호가 일치하지 않습니다.", exception.getMessage());
+        assertEquals("잘못된 비밀번호입니다.", exception.getMessage());
     }
 
     @Test
@@ -120,7 +122,7 @@ public class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true); // 비밀번호 일치
 
-        UserException exception = assertThrows(UserException.class, () -> {
+        AlreadyDeletedUserException exception = assertThrows(AlreadyDeletedUserException.class, () -> {
             userService.deleteUser(userId, password);
         });
 
