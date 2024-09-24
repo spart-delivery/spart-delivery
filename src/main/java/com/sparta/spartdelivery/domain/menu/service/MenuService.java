@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -24,7 +23,7 @@ public class MenuService {
     public MenuSaveResponseDto saveMenu(MenuSaveRequestDto menuSaveRequestDto, Long storeId) {
         /* 생성 시 메뉴 중복 체크 */
         if (menuRepository.findByStoreIdAndMenuName(storeId, menuSaveRequestDto.getMenuName()).isPresent()){
-            throw new IllegalArgumentException("이미 존재하는 메뉴입니다.");
+            throw new IllegalArgumentException("이미 존재하는 메뉴입니다."); // 커스텀exception
         }
         Menu newMenu = new Menu(
                 menuSaveRequestDto.getMenuName(),
@@ -45,7 +44,7 @@ public class MenuService {
     public MenuUpdateResponseDto updateMenu(Long menuId, MenuUpdateRequestDto menuUpdateRequestDto) {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(
-                        () -> new NullPointerException("menuId가 없습니다."));
+                        () -> new NullPointerException("menuId가 없습니다.")); // 커스텀exception
         menu.update(
                 menuUpdateRequestDto.getMenuName(),
                 menuUpdateRequestDto.getMenuPrice());
@@ -58,7 +57,7 @@ public class MenuService {
     @Transactional
     public void deleteMenu(Long menuId, AuthUser authUser) {
         /* authUser 검증 , */
-        if (authUser == null) {
+        if (authUser == null) {  // null 체크 고치기
             throw new IllegalStateException("유효하지 않은 사용자입니다.");
         }
 //        /* 사장 권한 검증 */
@@ -80,7 +79,7 @@ public class MenuService {
 
     public Menu findMenuById(Long menuId) {
         return menuRepository.findById(menuId)
-                .orElseThrow(() -> new NullPointerException("메뉴를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NullPointerException("메뉴를 찾을 수 없습니다.")); // exception 고치기
     }
 
 
