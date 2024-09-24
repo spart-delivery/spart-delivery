@@ -76,7 +76,7 @@ public class AuthServiceTest {
 
         when(userRepository.existsByEmail(signupRequest.getEmail())).thenReturn(true);
 
-
         assertThrows(EmailAlreadyExistsException.class, () -> authService.signup(signupRequest));
+
     }
 }
