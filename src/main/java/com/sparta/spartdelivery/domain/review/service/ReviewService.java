@@ -11,12 +11,11 @@ import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewEditResponse
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewReadResponseDto;
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewSaveResponseDto;
 import com.sparta.spartdelivery.domain.review.entity.Review;
-import com.sparta.spartdelivery.domain.review.exception.DoNotReviewUnCompletedOrderException;
-import com.sparta.spartdelivery.domain.review.exception.ExistReviewException;
-import com.sparta.spartdelivery.domain.review.exception.NotFoundReviewException;
+import com.sparta.spartdelivery.domain.review.exception.*;
 import com.sparta.spartdelivery.domain.review.repository.ReviewRepository;
 import com.sparta.spartdelivery.domain.store.entity.Store;
 import com.sparta.spartdelivery.domain.store.repository.StoreRepository;
+import com.sparta.spartdelivery.domain.user.exception.UserNotFoundException;
 import com.sparta.spartdelivery.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -122,21 +121,21 @@ public class ReviewService {
         Long userId = authUser.getId();
 
         if (userRepository.findById(userId).isEmpty()) {
-            throw new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
+            throw new UserNotFoundException();
         }
     }
 
     // 별점 입력값 확인 메서드
     private void validateStarPoint(Integer starPoint) {
         if(starPoint < 1 || starPoint > 5) {
-            throw new IllegalArgumentException("별점은 1 ~ 5 만 입력값만 입력할 수 있습니다.");
+            throw new ValidatationStarPointException();
         }
     }
 
     // 유저 본인이 작성한 리뷰인지 검증하는 메서드
     private void validateAuthReview(Long reviewId, Long userId) {
         if (!reviewRepository.existsByReviewIdAndUserId(reviewId, userId)) {
-            throw new IllegalArgumentException("본인이 작성한 리뷰만 수정 및 삭제할 수 있습니다.");
+            throw new DoNotDeleteReviewException();
         }
     }
 

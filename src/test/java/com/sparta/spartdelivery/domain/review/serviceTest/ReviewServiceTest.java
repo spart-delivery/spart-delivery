@@ -9,6 +9,7 @@ import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewEditResponse
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewReadResponseDto;
 import com.sparta.spartdelivery.domain.review.dto.responseDto.ReviewSaveResponseDto;
 import com.sparta.spartdelivery.domain.review.entity.Review;
+import com.sparta.spartdelivery.domain.review.exception.DoNotReviewUnCompletedOrderException;
 import com.sparta.spartdelivery.domain.review.exception.ExistReviewException;
 import com.sparta.spartdelivery.domain.review.exception.NotFoundReviewException;
 import com.sparta.spartdelivery.domain.review.repository.ReviewRepository;
@@ -17,6 +18,7 @@ import com.sparta.spartdelivery.domain.store.entity.Store;
 import com.sparta.spartdelivery.domain.store.repository.StoreRepository;
 import com.sparta.spartdelivery.domain.user.entity.User;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
+import com.sparta.spartdelivery.domain.user.exception.UserNotFoundException;
 import com.sparta.spartdelivery.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,9 +106,9 @@ class ReviewServiceTest {
         when(userRepository.findById(authUser.getId())).thenReturn(Optional.empty());
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class,
                 () -> reviewService.saveReview(authUser, reviewSaveRequestDto, orderId));
-        assertEquals("해당 유저는 존재하지 않습니다.", exception.getMessage());
+        assertEquals("사용자를 찾을 수 없습니다.", exception.getMessage());
     }
 
     @Test
@@ -132,7 +134,7 @@ class ReviewServiceTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        DoNotReviewUnCompletedOrderException exception = assertThrows(DoNotReviewUnCompletedOrderException.class,
                 () -> reviewService.saveReview(authUser, reviewSaveRequestDto, orderId));
         assertEquals("리뷰는 완료된 주문에 한해서만 작성할 수 있습니다.",exception.getMessage());
     }
