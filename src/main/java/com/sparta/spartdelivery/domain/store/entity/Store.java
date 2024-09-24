@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -29,10 +30,10 @@ public class Store {
     private String storeName;
 
     @Column(nullable = false, name = "open_time")
-    private LocalDateTime openTime;
+    private LocalTime openTime;
 
     @Column(nullable = false, name = "close_time")
-    private LocalDateTime closeTime;
+    private LocalTime closeTime;
 
     @Column(nullable = false, name = "min_order_price")
     private Integer minOrderPrice;

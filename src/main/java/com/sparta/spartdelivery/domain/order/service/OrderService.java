@@ -59,8 +59,8 @@ public class OrderService {
 
         // 오픈시간 이전, 마감시간 이후에는 주문 불가 처리
         LocalTime now = LocalDateTime.now().toLocalTime();
-        LocalTime openTime = store.getOpenTime().toLocalTime();
-        LocalTime closeTime = store.getCloseTime().toLocalTime();
+        LocalTime openTime = store.getOpenTime();
+        LocalTime closeTime = store.getCloseTime();
 
         if (now.isBefore(openTime) || now.isAfter(closeTime)) {
             throw new IllegalAccessException("영업시간 이외의 주문은 불가합니다.");

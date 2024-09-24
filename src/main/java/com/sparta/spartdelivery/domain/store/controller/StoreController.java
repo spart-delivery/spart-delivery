@@ -5,10 +5,8 @@ import com.sparta.spartdelivery.common.dto.AuthUser;
 import com.sparta.spartdelivery.common.dto.response.CommonResponseDto;
 import com.sparta.spartdelivery.domain.store.dto.request.StoreEditRequestDto;
 import com.sparta.spartdelivery.domain.store.dto.request.StoreSaveRequestDto;
-import com.sparta.spartdelivery.domain.store.dto.response.StoreEditResponseDto;
-import com.sparta.spartdelivery.domain.store.dto.response.StoreFindResponseDto;
-import com.sparta.spartdelivery.domain.store.dto.response.StoreSaveResponseDto;
-import com.sparta.spartdelivery.domain.store.dto.response.StoresSearchResponseDto;
+import com.sparta.spartdelivery.domain.store.dto.request.StoreStatisticsRequestDto;
+import com.sparta.spartdelivery.domain.store.dto.response.*;
 import com.sparta.spartdelivery.domain.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -89,6 +87,22 @@ public class StoreController {
         storeService.storeClose(authUser, storeId);
 
         return new ResponseEntity<>(new CommonResponseDto<>(HttpStatus.OK, "success", null), HttpStatus.OK);
+    }
+
+
+    /**
+     * 가게 대시보드
+     * 사장님은 본인의 가게에 대한 통계를 볼 수 있습니다.
+     * 일간/월간 고객수 및 매출
+     * @param
+     * @return
+     */
+    @GetMapping("/statistics")
+    public ResponseEntity<CommonResponseDto<List<StoreStatisticsResponseDto>>> storeStatistics(@Auth AuthUser authUser, @Valid @RequestBody StoreStatisticsRequestDto storeStatisticsRequestDto){
+
+        List<StoreStatisticsResponseDto> storeStatisticsResponseDtoList = storeService.storeStatistics(authUser, storeStatisticsRequestDto);
+
+        return new ResponseEntity<>(new CommonResponseDto<>(HttpStatus.OK, "success", storeStatisticsResponseDtoList), HttpStatus.OK);
     }
 
 }

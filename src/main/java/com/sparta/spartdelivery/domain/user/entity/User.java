@@ -29,6 +29,9 @@ public class User extends Timestamped {
     // 사용자 삭제 여부를 나타내는 필드
     private boolean deleted = false; // 기본값은 false (삭제되지 않음)
 
+    // 카카오 ID
+    private Long kakaoId;
+
     // 사용자 생성 시 이메일, 사용자 이름, 비밀번호, 역할을 받는 생성자
     public User(String email, String username, String password, UserRole userRole) {
         this.email = email;
@@ -45,7 +48,6 @@ public class User extends Timestamped {
 //        this.userRole = userRole;
 //    }
 
-
     // 비밀번호를 변경하는 메서드
     public void changePassword(String password) {
         this.password = password;
@@ -56,4 +58,18 @@ public class User extends Timestamped {
         this.deleted = true;
     }
 
+    // 카카오아이디 업데이트
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
+    }
+
+    // 카카오 유저 생성자
+    public User(String email, String username, String password, UserRole userRole, Long kakaoId) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.userRole = userRole;
+        this.kakaoId = kakaoId;
+    }
 }

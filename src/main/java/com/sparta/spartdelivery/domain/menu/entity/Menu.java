@@ -22,15 +22,24 @@ public class Menu {
     @Column(nullable = false)
     private int menuPrice;
 
+    @Column(name = "category_id")
+    private Long categoryId;
+
     // 상태 추가
     @Enumerated(EnumType.STRING)
     private MenuStatus status = MenuStatus.ACTIVE; /* 기본값은 ACTIVE */
 
-    public Menu( String menuName, int menuPrice, Long storeId){
+    public Menu( String menuName, int menuPrice, Long storeId, Long categoryId){
         this.menuName=menuName;
         this.menuPrice=menuPrice;
         this.storeId=storeId;
+        this.categoryId=categoryId;
     }
+
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
+    }
+
     public void update(String menuName, int menuPrice){
         this.menuName=menuName;
         this.menuPrice=menuPrice;

@@ -6,24 +6,20 @@ import com.sparta.spartdelivery.domain.menu.entity.Menu;
 import com.sparta.spartdelivery.domain.menu.repository.MenuRepository;
 import com.sparta.spartdelivery.domain.store.dto.request.StoreEditRequestDto;
 import com.sparta.spartdelivery.domain.store.dto.request.StoreSaveRequestDto;
-import com.sparta.spartdelivery.domain.store.dto.response.StoreEditResponseDto;
-import com.sparta.spartdelivery.domain.store.dto.response.StoreFindResponseDto;
-import com.sparta.spartdelivery.domain.store.dto.response.StoreSaveResponseDto;
-import com.sparta.spartdelivery.domain.store.dto.response.StoresSearchResponseDto;
+import com.sparta.spartdelivery.domain.store.dto.request.StoreStatisticsRequestDto;
+import com.sparta.spartdelivery.domain.store.dto.response.*;
 import com.sparta.spartdelivery.domain.store.entity.Store;
-import com.sparta.spartdelivery.domain.store.exception.NotFoundStoreException;
-import com.sparta.spartdelivery.domain.store.exception.PermissionDefinedOwnerException;
-import com.sparta.spartdelivery.domain.store.exception.PermissionDefinedStoreUpdateException;
-import com.sparta.spartdelivery.domain.store.exception.StoreNameIsExitsException;
+import com.sparta.spartdelivery.domain.store.exception.*;
 import com.sparta.spartdelivery.domain.store.repository.StoreRepository;
 import com.sparta.spartdelivery.domain.user.enums.UserRole;
+import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -83,7 +79,7 @@ public class StoreService {
         checkPermission(authUser.getId(), store.getUserId());
 
         // 이름 중복 체크
-        if(StreamSupport.stream(storeRepository.findByStoreName(storeEditRequestDto.getStoreName()).spliterator(), false).findAny().isPresent()){
+        if(!store.getStoreName().equals(storeEditRequestDto.getStoreName()) && StreamSupport.stream(storeRepository.findByStoreName(storeEditRequestDto.getStoreName()).spliterator(), false).findAny().isPresent()){
             throw new StoreNameIsExitsException(HttpStatus.BAD_REQUEST, "해당 이름을 가진 가게가 이미 존재합니다.");
         }
 
@@ -181,4 +177,47 @@ public class StoreService {
             throw new RuntimeException("폐업 작업 중 알수없는 에러가 발생하였습니다.");
         }
     }
+
+    public List<StoreStatisticsResponseDto> storeStatistics(AuthUser authUser, StoreStatisticsRequestDto storeStatisticsRequestDto) {
+
+        if(!authUser.getUserRole().equals(UserRole.OWNER)){
+            throw new PermissionDefinedOwnerException(HttpStatus.UNAUTHORIZED, "사장님 권한을 가진 유저만 조회가 가능합니다.");
+        }
+
+        if(storeStatisticsRequestDto.getDataType().equals("month") && (!storeStatisticsRequestDto.getStartDate().matches("^\\d{4}-\\d{2}$") || !storeStatisticsRequestDto.getEndDate().matches("^\\d{4}-\\d{2}$"))){
+            throw new DateFormatException(HttpStatus.BAD_REQUEST, "잘못된 날자 형태입니다. yyyy-mm");
+        }
+
+        if(storeStatisticsRequestDto.getDataType().equals("day") && (!storeStatisticsRequestDto.getStartDate().matches("^\\d{4}-\\d{2}-\\d{2}$") || !storeStatisticsRequestDto.getEndDate().matches("^\\d{4}-\\d{2}-\\d{2}$"))){
+            throw new DateFormatException(HttpStatus.BAD_REQUEST, "잘못된 날자 형태입니다. yyyy-mm-dd");
+        }
+
+        List<Tuple> storeStatistics = null;
+
+        List<StoreStatisticsResponseDto> dtoList = new ArrayList<>();
+
+        // 월별 통계
+        if(storeStatisticsRequestDto.getDataType().equals("month")){
+            storeStatistics = storeRepository.findByAllStoresStatistics(storeStatisticsRequestDto.getStartDate(), storeStatisticsRequestDto.getEndDate(), authUser.getId());
+        }
+
+        // 일별 통계
+        if(storeStatisticsRequestDto.getDataType().equals("day")){
+            storeStatistics = storeRepository.findByStoresStatistics(storeStatisticsRequestDto.getStartDate(), storeStatisticsRequestDto.getEndDate(), authUser.getId());
+        }
+
+        for (Tuple result : storeStatistics) {
+            StoreStatisticsResponseDto dto = new StoreStatisticsResponseDto(
+                    result.get("order_date", String.class),
+                    result.get("total_orders", Long.class),
+                    result.get("total_sales", BigDecimal.class)
+            );
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+
+    }
+
+
 }
