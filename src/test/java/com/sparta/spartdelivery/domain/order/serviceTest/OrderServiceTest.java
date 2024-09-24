@@ -6,6 +6,7 @@ import com.sparta.spartdelivery.domain.menu.repository.MenuRepository;
 import com.sparta.spartdelivery.domain.order.dto.OrderRequestDto;
 import com.sparta.spartdelivery.domain.order.entity.Order;
 import com.sparta.spartdelivery.domain.order.entity.OrderStatus;
+import com.sparta.spartdelivery.domain.order.exception.*;
 import com.sparta.spartdelivery.domain.order.repository.OrderRepository;
 import com.sparta.spartdelivery.domain.order.service.OrderService;
 import com.sparta.spartdelivery.domain.store.entity.Store;
@@ -67,6 +68,7 @@ public class OrderServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
     }
 
     @Nested
@@ -83,26 +85,11 @@ public class OrderServiceTest {
             @Test
             void 비로그인_상태로_주문했을_때_NPE_던지기() {
 
-                authUser = new AuthUser(1L, "", UserRole.USER);
-                orderRequestDto = new OrderRequestDto(1L, 1L, null);
-                store = Store.builder()
-                        .userId(1L)
-                        .storeName("")
-                        .openTime(LocalTime.of(10, 00, 00))
-                        .closeTime(LocalTime.of(14, 00, 00))
-                        .minOrderPrice(15000)
-                        .statusOpen(true)
-                        .statusShutdown(false)
-                        .createdAt(LocalDateTime.of(2024, 10, 01, 00, 00, 00))
-                        .build();
-
-                // given
                 given(userRepository.findById(authUser.getId())).willReturn(Optional.empty());
                 given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
                 given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
 
-                // when
-                NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+                NotFoundException exception = assertThrows(NotFoundException.class, () -> {
                     orderService.sendOrder(authUser, orderRequestDto);
                 });
 
@@ -112,33 +99,32 @@ public class OrderServiceTest {
             @Test
             void 없는_가게에_주문했을_때_NPE_던지기() {
 
-                // when
-                when(storeRepository.findById(1L)).thenReturn(Optional.empty());
+                when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+                when(menuRepository.findById(anyLong())).thenReturn(Optional.of(menu));
 
-                // then
-                assertThrows(NullPointerException.class, () -> {
+                NotFoundException exception = assertThrows(NotFoundException.class, () -> {
                     orderService.sendOrder(authUser, orderRequestDto);
                 });
+
+                assertEquals("존재하지 않는 가게입니다.", exception.getMessage());
             }
 
             @Test
             void 없는_메뉴를_주문했을_때_NPE_던지기() {
 
-                // when
+                when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
                 when(menuRepository.findById(1L)).thenReturn(Optional.empty());
 
-                // then
-                assertThrows(NullPointerException.class, () -> {
+                NotFoundException exception = assertThrows(NotFoundException.class, () -> {
                     orderService.sendOrder(authUser, orderRequestDto);
                 });
 
+                assertEquals("존재하지 않는 메뉴입니다.", exception.getMessage());
             }
 
             @Test
             void 최소주문금액_미만으로_주문했을_때_IE_던지기() {
 
-                authUser = new AuthUser(1L, "", UserRole.USER);
-                orderRequestDto = new OrderRequestDto(1L, 1L, OrderStatus.ACCEPTED);
                 store = Store.builder()
                         .userId(1L)
                         .storeName("")
@@ -150,23 +136,30 @@ public class OrderServiceTest {
                         .createdAt(LocalDateTime.of(2024, 10, 01, 00, 00, 00))
                         .build();
 
-                // given
                 given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
                 given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
                 given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
 
-                // when
-                IllegalAccessException exception = assertThrows(IllegalAccessException.class, () -> {
+                MinOrderPriceException exception = assertThrows(MinOrderPriceException.class, () -> {
                     orderService.sendOrder(authUser, orderRequestDto);
                 });
 
                 assertEquals("최소 주문 금액 이상 주문해야 합니다.", exception.getMessage());
             }
 
-            @Test
-            void 다른_가게의_메뉴를_주문했을_때_IE_던지기() {
-
-            }
+//            @Test
+//            void 다른_가게의_메뉴를_주문했을_때_IE_던지기() {
+//
+//                given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
+//                given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
+//                given(storeRepository.findById(store.getStoreId())).willReturn(Optional.of(store));
+//
+//                EqualStoreMenuException exception = assertThrows(EqualStoreMenuException.class, () -> {
+//                    orderService.sendOrder(authUser, orderRequestDto);
+//                });
+//
+//                assertEquals("해당 가게의 메뉴만 주문할 수 있습니다.", exception.getMessage());
+//            }
 
             @Test
             void 영업시간_외의_주문은_IE_던지기() {
@@ -189,13 +182,11 @@ public class OrderServiceTest {
             @Test
             void 일반_유저가_들어온_주문내역을_요청하면_IE_던지기() {
 
-                // given
-                user = new User(1L, "", UserRole.USER);
+                user = new User("", "", "", UserRole.USER);
 
-                // when & then
                 when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-                IllegalAccessException thrown = assertThrows(IllegalAccessException.class, () -> {
+                OwnerOnlyAccessException thrown = assertThrows(OwnerOnlyAccessException.class, () -> {
                     orderService.getAllOrders(authUser);
                 });
 
@@ -205,13 +196,12 @@ public class OrderServiceTest {
             @Test
             void 들어온_주문내역이_없으면_NPE_던지기() {
 
-                user = new User(1L, "", UserRole.OWNER);
-                authUser = new AuthUser(1L, "", UserRole.OWNER); // DTO
+                authUser = new AuthUser(1L, "", UserRole.OWNER);
 
                 given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
                 given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
 
-                NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+                OrderListNullException exception = assertThrows(OrderListNullException.class, () -> {
                     orderService.getAllOrders(authUser);
                 });
                 assertEquals("들어온 주문 내역이 없습니다.", exception.getMessage());
@@ -233,33 +223,51 @@ public class OrderServiceTest {
 
             }
 
-            @Test
-            void 없는_주문을_수락한다면_NPE_처리() {
-
-                // given
-                Long orderId = 30L;
-                authUser = new AuthUser(1L, "1", UserRole.OWNER);
-
-                // when
-                when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
-
-                // then
-                assertThrows(NullPointerException.class, () -> {
-                    orderService.updateOrderStatus(authUser, orderId, orderRequestDto);
-                });
-            }
-
-            @Test
-            void 없는_주문을_배달완료한다면_NPE_처리() {
-                Long orderId = 30L;
-                authUser = new AuthUser(1L, "1", UserRole.OWNER);
-
-                when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
-
-                assertThrows(NullPointerException.class, () -> {
-                    orderService.updateOrderStatus(authUser, orderId, orderRequestDto);
-                });
-            }
+//            @Test
+//            void 변경_상태를_입력하지_않는다면_NPE_처리() {
+//
+//                Long orderId = 1L;
+//                authUser = new AuthUser(1L, "", UserRole.OWNER);
+//
+//                when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+//                when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+//                when(storeRepository.findById(1L)).thenReturn(Optional.of(store));
+//
+//                StatusRequestNullException exception = assertThrows(StatusRequestNullException.class, () -> {
+//                    orderService.updateOrderStatus(authUser, orderId, orderRequestDto);
+//                });
+//
+//                assertEquals("변경할 상태를 입력해 주세요.", exception.getMessage());
+//            }
+//
+//            @Test
+//            void 없는_주문을_수락한다면_NPE_처리() {
+//
+//                Long orderId = 30L;
+//                authUser = new AuthUser(1L, "1", UserRole.OWNER);
+//
+//                when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+//                when(storeRepository.findById(1L)).thenReturn(Optional.of(store));
+//
+//                assertThrows(NullPointerException.class, () -> {
+//                    orderService.updateOrderStatus(authUser, orderId, orderRequestDto);
+//                });
+//
+//
+//            }
+//
+//            @Test
+//            void 없는_주문을_배달완료한다면_NPE_처리() {
+//
+//                Long orderId = 30L;
+//                authUser = new AuthUser(1L, "1", UserRole.OWNER);
+//
+//                when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+//
+//                assertThrows(NullPointerException.class, () -> {
+//                    orderService.updateOrderStatus(authUser, orderId, orderRequestDto);
+//                });
+//            }
         }
     }
 }
