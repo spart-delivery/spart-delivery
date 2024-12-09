@@ -116,6 +116,7 @@ class ReviewServiceTest {
         // given
         Long orderId = 1L;
         when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(mock(User.class)));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
         when(reviewRepository.existsByOrderId(orderId)).thenReturn(true);
 
         // when & then
@@ -169,7 +170,7 @@ class ReviewServiceTest {
         NotFoundReviewException exception = assertThrows(NotFoundReviewException.class, () ->
                 reviewService.editReview(authUser, reviewEditRequestDto, review.getReviewId()));
 
-        assertEquals("해당 리뷰는 없습니다.", exception.getMessage());
+        assertEquals("해당 리뷰를 찾을 수 없습니다.", exception.getMessage());
     }
 
     @Test
